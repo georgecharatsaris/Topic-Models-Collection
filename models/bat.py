@@ -1,3 +1,4 @@
+# Import the necessary libraries
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -6,14 +7,11 @@ import pandas as pd
 from torch.utils.data import DataLoader, TensorDataset
 
 
-
 class Encoder(nn.Module):
-
 
     def __init__(self, vocab_size, num_topics, batch_size):
         super(Encoder, self).__init__()
         self.batch_size = batch_size
-
 
         self.model = nn.Sequential(
             nn.Linear(vocab_size, 100),
@@ -23,25 +21,20 @@ class Encoder(nn.Module):
             nn.Softmax(1)
         )
 
-
     def forward(self, inputs):
         batch_size = inputs.shape[0]
         if self.batch_size != batch_size:
             self.batch_size = batch_size 
 
-
         x = self.model(inputs)
         return x
 
 
-
 class Generator(nn.Module):
-
 
     def __init__(self, vocab_size, num_topics, batch_size):
         super(Generator, self).__init__()
         self.batch_size = batch_size
-
 
         self.model = nn.Sequential(
             nn.Linear(num_topics, 100),
@@ -51,12 +44,10 @@ class Generator(nn.Module):
             nn.Softmax(1)
         )
 
-
     def forward(self, inputs):
         batch_size = inputs.shape[0]
         if self.batch_size != batch_size:
             self.batch_size = batch_size 
-
 
         x = self.model(inputs)
         return x
@@ -65,11 +56,9 @@ class Generator(nn.Module):
 
 class Discriminator(nn.Module):
 
-
     def __init__(self, vocab_size, num_topics, batch_size):
         super(Discriminator, self).__init__()
         self.batch_size = batch_size
-
 
         self.model = nn.Sequential(
             nn.Linear(vocab_size + num_topics, 100),
@@ -77,16 +66,13 @@ class Discriminator(nn.Module):
             nn.Linear(100, 1)
         )
 
-
     def forward(self, inputs):
         batch_size = inputs.shape[0]
         if self.batch_size != batch_size:
             self.batch_size = batch_size
 
-
         x = self.model(inputs)
         return x
-
 
 
 def train_model(epochs, num_topics, n_critic, device):
@@ -110,27 +96,22 @@ def train_model(epochs, num_topics, n_critic, device):
         losses_d, losses_g, losses_e = [], [], []
         total_losses = []
         total, total_i = 0, 0
-
-        
+       
         for i, (d_r, _) in enumerate(train_loader):
             d_r = (d_r/(torch.sum(d_r, 1).unsqueeze(1))).to(device) # Normalize the inputs
             dirichlet = torch.distributions.Dirichlet(torch.ones(size=(d_r.shape[0], num_topics)))
             theta_f = (dirichlet.sample()).to(device)
 
-
             d_f, theta_r = generator(theta_f).detach(), encoder(d_r).detach()
             p_r, p_f = (torch.cat((theta_r, d_r), 1)).to(device), (torch.cat((theta_f, d_f), 1)).to(device)
-
 
             discriminator.zero_grad()
             L_d = torch.mean(discriminator(p_f)) - torch.mean(discriminator(p_r))
             L_d.backward()
             optimizer_d.step()
 
-
             for p in discriminator.parameters():
                 p.data.clamp_(-0.01, 0.01) # Clip the weights of the discriminator
-
 
             if i%n_critic == 0:
                 generator.zero_grad()
@@ -139,17 +120,14 @@ def train_model(epochs, num_topics, n_critic, device):
                 optimizer_g.step()
                 losses_g.append(L_g)
 
-
                 encoder.zero_grad()
                 L_e = torch.mean(discriminator(p_r))
                 L_e.backward()
                 optimizer_e.step()
                 losses_e.append(L_e)
 
-
                 losses_d.append(L_d)
                 total += 1
-
 
         epoch_d = sum(losses_d)/total
         epoch_g = sum(losses_g)/total
@@ -157,9 +135,7 @@ def train_model(epochs, num_topics, n_critic, device):
         train_losses.append([epoch_d, epoch_g, epoch_e])
         print(f'Epoch {epoch + 1}/{epochs}, Encoder Loss:{epoch_e}, Generator Loss:{epoch_g}, Discriminator Loss:{epoch_d}')
 
-
     return train_losses
-
 
 
 def get_topics(tfidf, model, num_topics):
@@ -178,17 +154,17 @@ def get_topics(tfidf, model, num_topics):
 	
 	"""
 
+# Generate the topic-word matrix
     onehot_topic = torch.eye(num_topics, device=device)
     topic_word_matrix = model(onehot_topic)
+# Create a list of list of the top 10 words for each topic
     topic_list = []
-
 
     for topic in topic_word_matrix:        
         topic_list.append([tfidf.get_feature_names()[j] for j in topic.argsort()[-10:]])
 
-
+# Save the resulted list of lists of words for each topic setting
     df = pd.DataFrame(np.array(topic_list).T, columns=[f'Topic {i + 1}' for i in range(num_topics)])
     df.to_excel(f'BAT_{num_topics}.xlsx')
-
 
     return topic_list

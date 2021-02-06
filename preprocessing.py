@@ -11,12 +11,10 @@ from gensim.models import Word2Vec
 from sentence_transformers import SentenceTransformer
 
 
-
 # Define some important variables
 english_words = set(words.words())
 stop_words = set(stopwords.words('english'))
 lemmatizer = WordNetLemmatizer()
-
 
 
 # Essential preprocessing for all the models.
@@ -28,7 +26,6 @@ def tokenizer(text):
     tokens = [token for token in text.split() if lemmatizer.lemmatize(token) in english_words \
     		  and token not in stop_words and len(token) > 2] # Keep the english words, delete stopwords, and words of length less than 3
     return ' '.join(tokens)
-
 
 
 def document_term_matrix(inputs, vectorizer, min_df, max_df):
@@ -56,7 +53,6 @@ def document_term_matrix(inputs, vectorizer, min_df, max_df):
     return model, dtm.toarray()
 
 
-
 # Necessary for evaluating the several models.
 def get_dictionary(model, articles, min_df, size):
 
@@ -80,7 +76,6 @@ def get_dictionary(model, articles, min_df, size):
     return bow, dictionary, w2v
 
 
-
 # Deep Learning models preprocessing.
 def dataset(dtm, batch_size):
 
@@ -100,7 +95,6 @@ def dataset(dtm, batch_size):
     train_data = TensorDataset(X_tensor, X_tensor)
     train_loader = DataLoader(train_data, batch_size=batch_size)       
     return train_loader    
-
 
 
 # Contextualized topic models preprocessing.
@@ -124,7 +118,6 @@ def sBert_embeddings(documents, device):
 	return sent_embeddings
 
 
-
 def dataset_creation(dtm, sent_embeddings):
 
 	"""Creates the input for CTM model.
@@ -136,7 +129,8 @@ def dataset_creation(dtm, sent_embeddings):
 
 		Returns:
 
-			dataset: A list of dictionaries. The dictionary's keys are the vectors of the document given from CountVectorizer and its values are the respective sBert embeddings.
+			dataset: A list of dictionaries. The dictionary's keys are the vectors of the document given from CountVectorizer and its values are the respective sBert
+					 embeddings.
 	"""
 
     dataset = []

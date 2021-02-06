@@ -10,7 +10,6 @@ from torch.utils.data import TensorDataset, DataLoader
 from contextualized_topic_models.models.ctm import CombinedTM
 
 
-
 def CTM(dataset, cv, vocab_size, bert_size, num_topics):
 
 	"""Returns the topic list and the document-topic matrix.
@@ -33,14 +32,11 @@ def CTM(dataset, cv, vocab_size, bert_size, num_topics):
 	ctm = CombinedTM(input_size=vocab_size, bert_input_size=bert_size, n_components=num_topics)
 	ctm.fit(dataset)
 
-
 	word_topic_matrix = ctm.get_topic_word_matrix()
 	doc_topic_matrix = ctm.get_doc_topic_distribution(dataset)
 	topic_list = []
 
-
 	for topic in word_topic_matrix:
 		topic_list.append([cv.get_feature_names()[j] for j in topic.argsort([-10:])])
-
 
 	return topic_list, doc_topic_matrix
