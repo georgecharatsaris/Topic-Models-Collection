@@ -1,3 +1,4 @@
+# Import the necessary libraries
 from itertools import combinations
 from gensim.models import CoherenceModel
 import numpy as np
@@ -11,7 +12,6 @@ class CoherenceScores():
         self.bow = bow
         self.dictionary = dictionary
         self.w2v = w2v
-
     
     def c_v(self):
 
@@ -20,7 +20,6 @@ class CoherenceScores():
         model = CoherenceModel(topics=self.topic_list, texts=self.bow, dictionary=self.dictionary, coherence='c_v')
         return model.get_coherence()
 
-
     def c_npmi(self):
 
         """Calculates the NPMI coherence score."""
@@ -28,14 +27,12 @@ class CoherenceScores():
         model = CoherenceModel(topics=self.topic_list, texts=self.bow, dictionary=self.dictionary, coherence='c_npmi')
         return model.get_coherence()
 
-
     def c_uci(self):
 
         """Calculates the UCI coherence score."""
 
         model = CoherenceModel(topics=self.topic_list, texts=self.bow, dictionary=self.dictionary, coherence='c_uci')
         return model.get_coherence()
-
 
     def c_w2v(self):
 
