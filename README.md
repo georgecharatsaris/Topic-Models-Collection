@@ -1,16 +1,16 @@
-# Topic-Models-Collection
+## Topic-Models-Collection
 
 This repository contains implementations of several topic models. 
 
-# Implementations
+## Implementations
 
 - Latent Dirichlet Allocation (LDA):
 
-# Authors
+## Authors
 
 David M. Blei, Andrew Y. Ng, Michael I. Jordan
 
-# Abstract
+## Abstract
 
 We describe latent Dirichlet allocation (LDA), a generative probabilistic model for 
 collections of discrete data such as text corpora. LDA is a three-level hierarchical 
