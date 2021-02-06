@@ -1,3 +1,7 @@
+!pip install -U sentence-transformers
+
+
+
 # Import the libraries
 import pandas as pd
 import numpy as np
@@ -6,8 +10,9 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from nltk.corpus import words, stopwords
 from nltk.stem import WordNetLemmatizer
 from gensim.corpora.dictionary import Dictionary
-from gensim.models import Word2Vec, KeyedVectors
-import pickle
+from gensim.models import Word2Vec
+from sentence_transformers import SentenceTransformer
+
 
 
 # Define some important variables
@@ -16,11 +21,8 @@ stop_words = set(stopwords.words('english'))
 lemmatizer = WordNetLemmatizer()
 
 
-# Load the dataset and choose only the articles
-df = pd.read_csv('C:\\Users\\gxara\\HeinOnline\\HeinOnline.csv', index_col=0)
-articles = df['content']
 
-
+# Essential preprocessing for all the models.
 def tokenizer(text):
 
 	"""Returns the processed text."""  
@@ -29,6 +31,7 @@ def tokenizer(text):
     tokens = [token for token in text.split() if lemmatizer.lemmatize(token) in english_words \
     		  and token not in stop_words and len(token) > 2] # Keep the english words, delete stopwords, and words of length less than 3
     return ' '.join(tokens)
+
 
 
 def document_term_matrix(inputs, vectorizer, min_df, max_df):
@@ -56,6 +59,8 @@ def document_term_matrix(inputs, vectorizer, min_df, max_df):
     return model, dtm.toarray()
 
 
+
+# Necessary for evaluating the several models.
 def get_dictionary(model, articles, min_df, size):
 
 	"""Returns the bag of words, the dictionary of the corpus, and the w2v vectors of the words in the dictionary.
@@ -78,22 +83,68 @@ def get_dictionary(model, articles, min_df, size):
     return bow, dictionary, w2v
 
 
-processed_articles = articles.apply(tokenizer)
-# Define the necessary arguments for the functions
-min_df = 2
-max_df = 0.7
-size = 100
+
+# Deep Learning models preprocessing.
+def dataset(dtm, batch_size):
+
+	"""Creates the input for ProdLDA, BAT, ETM models.
+
+		Arguments:
+
+			dtm: An array representing the document term matrix.
+			batch_size: Number of documents in each batch during model's training.
+
+		Returns:
+
+			train_loader: An iterable over the dataset.			 
+	"""
+
+    X_tensor = torch.FloatTensor(dtm)
+    train_data = TensorDataset(X_tensor, X_tensor)
+    train_loader = DataLoader(train_data, batch_size=batch_size)       
+    return train_loader    
 
 
-model, dtm = document_term_matrix(processed_articles, 'cv', min_df=min_df, max_df=max_df)
-bow, dictionary, w2v = get_dictionary(model, processed_articles, min_df, size)
+
+# Contextualized topic models preprocessing.
+def sBert_embeddings(documents, device):
+
+	"""Returns embeddings for the documents in the corpus.
+
+	Arguments:
+
+		documents: A list of lists of documents.
+		device: 'cpu' or 'cuda'
+
+	Returns:
+	
+		sent_embeddings: A list of lists of embeddings given by sBert.
+
+	"""
+
+	model = SentenceTransformer('distilbert-base-nli-stsb-mean-tokens').to(device)
+	sent_embeddings = model.encode(documents)
+	return sent_embeddings
 
 
-# Save the vectorizer and the document term matrix for later use as the topic models' inputs
-np.save('C:\\Users\\gxara\\HeinOnline\\dtm', dtm) 
-pickle.dump(model, open('C:\\Users\\gxara\\HeinOnline\\cv.pickle', 'wb'))
-# Save the bag of words, the dictionary and the w2v vectors for the topic models' evaluation
-np.save('C:\\Users\\gxara\\HeinOnline\\bow', bow)
-dictionary.save_as_text('C:\\Users\\gxara\\HeinOnline\\dictionary.txt')
-word_vectors = w2v.wv
-word_vectors.save('C:\\Users\\gxara\\HeinOnline\\vectors.kv')
+
+def dataset_creation(dtm, sent_embeddings):
+
+	"""Creates the input for CTM model.
+
+		Arguments:
+
+			dtm: An array representing the document term matrix.
+			sent_embeddings: The embeddings given by sBert.
+
+		Returns:
+
+			dataset: A list of dictionaries. The dictionary's keys are the vectors of the document given from CountVectorizer and its values are the respective sBert embeddings.
+	"""
+
+    dataset = []
+
+    for i, j in zip(dtm, sent_embeddings):
+        dataset.append({'X':i, 'X_bert':torch.FloatTensor(j)})
+
+    return dataset	

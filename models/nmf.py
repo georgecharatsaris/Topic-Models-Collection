@@ -4,6 +4,7 @@ import pandas as pd
 from sklearn.decomposition import NMF as model
 
 
+
 def NMF(dtm, tfidf, num_topics):
 
 	"""Returns a list of lists of the top 10 words for each topic.

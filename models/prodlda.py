@@ -7,25 +7,6 @@ from torch.utils.data import TensorDataset, DataLoader
 import pandas as pd
 
 
-def dataset(dtm, batch_size):
-
-	"""Creates the input for the model.
-
-		Arguments:
-
-			dtm: An array representing the document term matrix.
-			batch_size: Number of documents in each batch during model's training.
-
-		Returns:
-
-			train_loader: An iterable over the given dataset.			 
-	"""
-
-    X_tensor = torch.FloatTensor(dtm)
-    train_data = TensorDataset(X_tensor, X_tensor)
-    train_loader = DataLoader(train_data, batch_size=batch_size)       
-    return train_loader
-
 
 class ProdLDA(nn.Module):
 
@@ -104,9 +85,25 @@ class ProdLDA(nn.Module):
         return word_dist, torch.mean(KL_divergence + reconstruction_loss)
 
 
+
 def train_model(train_loader, model, optimizer, num_topics, epochs, device):
 
-	"""Trains the model."""
+	"""Trains the model.
+
+		Arguments:
+
+			train_loader: An iterable over the dataset.
+			model: The ProdLDA model.
+			optimizer: The optimizer for updating the model's paratemeters.
+			num_topics: The number of topics
+			epoch: The number of the training iterations.
+			device: 'cuda' or 'cpu'.
+
+		Returns:
+
+			train_losses: A list of the model's losses during the training. Its length is equal to the number of epochs.
+
+	"""
 
     model.train()
     train_losses = []
@@ -128,10 +125,12 @@ def train_model(train_loader, model, optimizer, num_topics, epochs, device):
 
 
         epoch_loss = sum(losses)/total
-        train_losses.append(epoch_loss)
-
-        
+        train_losses.append(epoch_loss)       
         print(f'Epoch {epoch + 1}/{epochs}: Loss={epoch_loss}')
+
+
+    return train_losses
+
 
 
 def get_topics(cv, topics, num_topics):
