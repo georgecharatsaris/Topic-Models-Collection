@@ -23,7 +23,7 @@ empirical Bayes parameter estimation. We report results in document modeling, te
 classification, and collaborative filtering, comparing to a mixture of unigrams model and 
 the probabilistic LSI model.
 
-[code](https://github.com/Georgios1993/Topic-Models-Collection/blob/main/models/lda.py)
+[[Paper]](https://jmlr.org/papers/volume3/blei03a/blei03a.pdf)[[Code]](https://github.com/Georgios1993/Topic-Models-Collection/blob/main/models/lda.py)
 
 ## Non-Negative Factorization (NMF):
 
@@ -51,7 +51,7 @@ scenarios.Overall, our book chapter cover the broad spectrum of NMF in the conte
 clustering and topic modeling, from fundamental algorithmic behaviors to practical visual 
 analytics systems.
 
-[code](https://github.com/Georgios1993/Topic-Models-Collection/blob/main/models/nmf.py)
+[[Paper]](https://link.springer.com/chapter/10.1007/978-3-319-09259-1_7)[[Code]](https://github.com/Georgios1993/Topic-Models-Collection/blob/main/models/nmf.py)
 
 ## Autoencoding Variational Inference (ProdLDA):
 
@@ -61,25 +61,22 @@ Akash Srivastava, Charles Sutton
 
 ### Abstract
 
-Topic models are one of the most popular methods for learning representations of
-text, but a major challenge is that any change to the topic model requires mathematically
-deriving a new inference algorithm. A promising approach to address
-this problem is autoencoding variational Bayes (AEVB), but it has proven difficult
-to apply to topic models in practice. We present what is to our knowledge the
-first effective AEVB based inference method for latent Dirichlet allocation (LDA),
-which we call Autoencoded Variational Inference For Topic Model (AVITM). This
-model tackles the problems caused for AEVB by the Dirichlet prior and by component
-collapsing. We find that AVITM matches traditional methods in accuracy
-with much better inference time. Indeed, because of the inference network, we
-find that it is unnecessary to pay the computational cost of running variational
-optimization on test data. Because AVITM is black box, it is readily applied
-to new topic models. As a dramatic illustration of this, we present a new topic
-model called ProdLDA, that replaces the mixture model in LDA with a product
-of experts. By changing only one line of code from LDA, we find that ProdLDA
-yields much more interpretable topics, even if LDA is trained via collapsed Gibbs
-sampling.
+Topic models are one of the most popular methods for learning representations of text, but a 
+major challenge is that any change to the topic model requires mathematically deriving a new 
+inference algorithm. A promising approach to address this problem is autoencoding variational 
+Bayes (AEVB), but it has proven difficult to apply to topic models in practice. We present 
+what is to our knowledge the first effective AEVB based inference method for latent Dirichlet 
+allocation (LDA), which we call Autoencoded Variational Inference For Topic Model (AVITM). 
+This model tackles the problems caused for AEVB by the Dirichlet prior and by component 
+collapsing. We find that AVITM matches traditional methods in accuracy with much better 
+inference time. Indeed, because of the inference network, we find that it is unnecessary to 
+pay the computational cost of running variational optimization on test data. Because AVITM 
+is black box, it is readily applied to new topic models. As a dramatic illustration of this, 
+we present a new topic model called ProdLDA, that replaces the mixture model in LDA with a 
+product of experts. By changing only one line of code from LDA, we find that ProdLDA yields 
+much more interpretable topics, even if LDA is trained via collapsed Gibbs sampling.
 
-[code](https://github.com/Georgios1993/Topic-Models-Collection/blob/main/models/prodlda.py)
+[[Paper]](https://arxiv.org/abs/1703.01488)[[Code]](https://github.com/Georgios1993/Topic-Models-Collection/blob/main/models/prodlda.py)
 
 ## Neural Topic Modeling with Bidirectional Adversarial Training (BAT):
 
@@ -107,7 +104,7 @@ outperforming several competitive baselines. Moreover, when performing text clus
 on the extracted topics, our models outperform all the baselines, with more significant 
 improvements achieved by Gaussian-BAT where an increase of near 6% is observed in accuracy.
 
-[code](https://github.com/Georgios1993/Topic-Models-Collection/blob/main/models/bat.py)
+[[Paper]](https://arxiv.org/abs/2004.12331)[[code]](https://github.com/Georgios1993/Topic-Models-Collection/blob/main/models/bat.py)
 
 ## Topic Models in Embedded Spaces (ETM):
 
@@ -128,4 +125,25 @@ interpretable topics even with large vocabularies that include rare words and st
 It outperforms existing document models, such as latent Dirichlet allocation, in terms of 
 both topic quality and predictive performance.
 
-[code](https://github.com/Georgios1993/Topic-Models-Collection/blob/main/models/etm.py)
+[[Paper]](https://www.mitpressjournals.org/doi/full/10.1162/tacl_a_00325)[[code]](https://github.com/Georgios1993/Topic-Models-Collection/blob/main/models/etm.py)
+
+## Topic Models in Embedded Spaces (ETM):
+
+### Authors
+
+Federico Bianchi, Silvia Terragni, Dirk Hovy
+
+### Abstract
+
+Topic models extract meaningful groups of words from documents, allowing for a better 
+understanding of data. However, the solutions are often not coherent enough, and thus harder 
+to interpret. Coherence can be improved by adding more contextual knowledge to the model. 
+Recently, neural topic models have become available, while BERT-based representations have 
+further pushed the state of the art of neural models in general. We combine pre-trained 
+representations and neural topic models. Pre-trained BERT sentence embeddings indeed support 
+the generation of more meaningful and coherent topics than either standard LDA or existing 
+neural topic models. Results on four datasets show that our approach effectively increases 
+topic coherence.
+
+[[Paper]](https://arxiv.org/abs/2004.03974)[[code]](https://github.com/Georgios1993/Topic-Models-Collection/blob/main/models/ctm.py)
+
