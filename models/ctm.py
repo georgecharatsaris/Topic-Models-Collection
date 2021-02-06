@@ -17,7 +17,7 @@ def CTM(dataset, cv, vocab_size, bert_size, num_topics):
 		Arguments:
 
 			dataset: Dataset for CTM.
-			cv: CountVectorizer from preprocessing.py.
+			cv: The CountVectorizer from preprocessing.py.
 			vocab_size: The size of the vocabulery.
 			bert_size: The size of the sBert embeddings.
 			num_topics: The number of topics.

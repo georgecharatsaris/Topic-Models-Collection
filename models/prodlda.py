@@ -73,7 +73,7 @@ class ProdLDA(nn.Module):
         return word_dist, torch.mean(KL_divergence + reconstruction_loss)
 
 
-def train_model(train_loader, model, optimizer, num_topics, epochs, device):
+def train_model(train_loader, model, optimizer, epochs, device):
 
 	"""Trains the model.
 
@@ -81,8 +81,7 @@ def train_model(train_loader, model, optimizer, num_topics, epochs, device):
 
 			train_loader: An iterable over the dataset.
 			model: The ProdLDA model.
-			optimizer: The optimizer for updating the model's paratemeters.
-			num_topics: The number of topics
+			optimizer: The optimizer for updating ProdLDA's paratemeters.
 			epoch: The number of the training iterations.
 			device: 'cuda' or 'cpu'.
 
@@ -121,7 +120,7 @@ def get_topics(cv, model, num_topics):
 
 		Arguments:
 
-			cv: CountVectorizer from preprocessing.py.
+			cv: The CountVectorizer from preprocessing.py.
 			model: The ProdLDA model.
 			num_topics: The number of topics.
 

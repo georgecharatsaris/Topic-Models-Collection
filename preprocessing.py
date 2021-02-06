@@ -35,8 +35,8 @@ def document_term_matrix(inputs, vectorizer, min_df, max_df):
 	    Arguments:
 			inputs: A list of lists of documents.
 			vectorizer: 'cv' for CountVectorizer, 'tfidf' for TfidfVectorizer.
-			min_df: Minimum number of documents that contain a word.
-			max_df: Maximum number of documents that contain a word.  
+			min_df: The minimum number of documents that contain a word.
+			max_df: The maximum number of documents that contain a word.  
 
 		Returns:
 			model: The selected model.
@@ -59,7 +59,7 @@ def get_dictionary(model, articles, min_df, size):
 	"""Returns the bag of words, the dictionary of the corpus, and the w2v vectors of the words in the dictionary.
 
 		Arguments:
-			model: CountVectorizer or TfidfVectorizer trained on the articles.
+			model: The CountVectorizer or TfidfVectorizer model trained on the articles.
 			articles: A list of lists of processed documents (at least without punctuation).
 			min_df : The minimum number of documents that contain a word.
 			size: The size of w2v vectors.
@@ -84,7 +84,7 @@ def dataset(dtm, batch_size):
 		Arguments:
 
 			dtm: An array representing the document term matrix.
-			batch_size: Number of documents in each batch during model's training.
+			batch_size: The number of documents in each batch during model's training.
 
 		Returns:
 
@@ -94,7 +94,7 @@ def dataset(dtm, batch_size):
     X_tensor = torch.FloatTensor(dtm)
     train_data = TensorDataset(X_tensor, X_tensor)
     train_loader = DataLoader(train_data, batch_size=batch_size)       
-    return train_loader    
+    return train_loader   
 
 
 # Contextualized topic models preprocessing.
@@ -138,4 +138,56 @@ def dataset_creation(dtm, sent_embeddings):
     for i, j in zip(dtm, sent_embeddings):
         dataset.append({'X':i, 'X_bert':torch.FloatTensor(j)})
 
-    return dataset	
+    return dataset
+
+
+# Embedding matrix creation for the ETM model.
+def glove_embeddings(tfidf, vocab_size, embedding_dict):
+
+	"""Returns the embedding matrix containing the glove embeddings.
+
+		Arguments:
+
+			tfidf: The TfidfVectorizer from preprocessing.py.
+			vocab_size: The size of the vocabulary.
+			embedding_dict: A dictionary with keys the words and values the corresponding glove embeddings.
+
+		Returns:
+
+			embedding_matrix: A matrix that contains glove embeddings for each word in the vocabulary.
+
+
+	"""
+
+    embedding_matrix = np.zeros(shape=(vocab_size, 300))
+    
+    for word, index in tfidf.vocabulary_.items():
+        if word in embeddings_dict.keys():
+            embedding_matrix[index] = embeddings_dict[word]
+
+    return embedding_matrix
+
+
+def word2vec_embeddings(tfidf, vocab_size, w2v):
+
+	"""Returns the embedding matrix containing the glove embeddings.
+
+		Arguments:
+
+			tfidf: The TfidfVectorizer from preprocessing.py.
+			vocab_size: The size of the vocabulary.
+			w2v: The word2vec model from preprocessing.py
+
+		Returns:
+
+			embedding_matrix: A matrix that contains w2v embeddings for each word in the vocabulary.
+
+	"""
+
+    embedding_matrix = np.zeros(shape=(vocab_size, 100))
+    
+    for word, index in tfidf.vocabulary_.items():
+        if word in w2v.vocab.keys():
+            embedding_matrix[index] = w2v[word]
+
+    return embedding_matrix	

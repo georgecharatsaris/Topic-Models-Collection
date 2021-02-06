@@ -11,7 +11,7 @@ def LDA(dtm, cv, num_topics):
 		Arguments:
 
 			dtm: An array representing the document term matrix.
-			cv: CountVectorizer from preprocessing.py.
+			cv: The CountVectorizer from preprocessing.py.
 			num_topics: The number of topics used by LDA.
 
 		Returns:

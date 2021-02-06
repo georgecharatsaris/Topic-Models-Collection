@@ -75,12 +75,18 @@ class Discriminator(nn.Module):
         return x
 
 
-def train_model(epochs, num_topics, n_critic, device):
+def train_model(discriminator, generator, encoder, optimizer_d, optimizer_g, optimizer_e, epochs, num_topics, n_critic, device):
 
 	"""Return a list of lists each containing the Discriminator's, Generator's and Encoder's loss, respectively.
 
 		Arguments:
-
+			
+			discriminator: The Discriminator.
+			generator: The Generator.
+			encoder: The Encoder.
+			optimizer_d: The optimizer for updating the Discriminator's paratemeters.
+			optimizer_g: The optimizer for updating the Generator's paratemeters.
+			optimizer_e: The optimizer for updating the Encoder's paratemeters.
 			epochs: The number of the training iterations.
 			num_topics: The number of topics.
 			n_critic: The number of discriminator iterations per generator iteration
@@ -91,6 +97,10 @@ def train_model(epochs, num_topics, n_critic, device):
 			train_losses: A list of lists each containing the Discriminator's, Generator's and Encoder's loss, respectively.
 			
 	"""
+
+	discriminator.train()
+	generator.train()
+	encoder.train()
 
     for epoch in range(epochs):
         losses_d, losses_g, losses_e = [], [], []
@@ -138,15 +148,16 @@ def train_model(epochs, num_topics, n_critic, device):
     return train_losses
 
 
-def get_topics(tfidf, model, num_topics):
+def get_topics(tfidf, model, num_topics, device):
 
 	"""Returns a list of lists of the top 10 words for each topic.
 
 		Arguments:
 
-			tfidf: TfidfVectorizer from preprocessing.py.
-			topics: The topic-word matrix given by the model.
+			tfidf: The TfidfVectorizer from preprocessing.py.
+			model: The Generator.
 			num_topics: The number of topics.
+			device: 'cpu' or 'cuda'.
 
 		Returns:
 

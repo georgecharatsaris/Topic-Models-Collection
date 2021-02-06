@@ -11,7 +11,7 @@ def NMF(dtm, tfidf, num_topics):
 		Arguments:
 
 			dtm: An array representing the document term matrix.
-			tfidf: TfidfVectorizer from preprocessing.py.
+			tfidf: The TfidfVectorizer from preprocessing.py.
 			num_topics: The number of topics used by LDA.
 
 		Returns:
