@@ -1,8 +1,5 @@
 !pip install -U sentence-transformers
-
-
-
-# Import the libraries
+# Import the necessary libraries
 import pandas as pd
 import numpy as np
 import re
