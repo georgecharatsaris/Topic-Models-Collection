@@ -32,8 +32,11 @@ def CTM(dataset, cv, vocab_size, bert_size, num_topics):
 	ctm = CombinedTM(input_size=vocab_size, bert_input_size=bert_size, n_components=num_topics)
 	ctm.fit(dataset)
 
+# Generate the topic-word matrix
 	word_topic_matrix = ctm.get_topic_word_matrix()
+# Generate the topic mixture over the documents
 	doc_topic_matrix = ctm.get_doc_topic_distribution(dataset)
+# Create a list of lists of the top 10 words for each topic
 	topic_list = []
 
 	for topic in word_topic_matrix:

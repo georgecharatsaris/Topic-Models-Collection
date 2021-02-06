@@ -25,7 +25,7 @@ def LDA(dtm, cv, num_topics):
 
 # Generate the topic-word matrix
 	topics = lda.components_
-# Create a list of list of the top 10 words for each topic
+# Create a list of lists of the top 10 words for each topic
 	topic_list = []
 
 	for topic in topics:
