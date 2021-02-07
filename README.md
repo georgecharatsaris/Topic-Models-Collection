@@ -1,6 +1,15 @@
 # Topic-Models-Collection
 
-This repository contains implementations of several topic models. 
+This repository contains implementations of several topic models on HeinOnline. 
+
+# Dataset
+
+HeinOnline dataset consists of 3857 journal articles obtained from HeinOnline as a result of 
+a Data and Text Mining Agreement. The dataset covers literature between 1960 and 2019, and 
+these articles are the result of a Boolean search using the keyword ''artificial 
+intelligence''. All the included articles contain both keywords at least once.
+
+[[Link]](https://home.heinonline.org/)
 
 # Implementations
 
@@ -127,7 +136,7 @@ both topic quality and predictive performance.
 
 [[Paper]](https://www.mitpressjournals.org/doi/full/10.1162/tacl_a_00325) [[code]](https://github.com/Georgios1993/Topic-Models-Collection/blob/main/models/etm.py)
 
-## Topic Models in Embedded Spaces (ETM):
+## Contextualized Topic Models (CTM):
 
 ### Authors
 
@@ -145,5 +154,5 @@ the generation of more meaningful and coherent topics than either standard LDA o
 neural topic models. Results on four datasets show that our approach effectively increases 
 topic coherence.
 
-[[Paper]](https://arxiv.org/abs/2004.03974) [[code]](https://github.com/Georgios1993/Topic-Models-Collection/blob/main/models/ctm.py)
+[[Paper]](https://arxiv.org/abs/2004.03974) [[code]](https://github.com/Georgios1993/Topic-Models-Collection/blob/main/models/ctm.py) [[GitHub]](https://github.com/MilaNLProc/contextualized-topic-models)
 
