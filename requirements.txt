@@ -1,0 +1,9 @@
+torch===1.7.1
+gensim
+scikit-learn
+numpy
+pandas
+nltk
+-U sentence-transformers
+-U contextualized_topic_models
+
