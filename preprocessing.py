@@ -1,4 +1,4 @@
-!pip install -U sentence-transformers
+#!pip install -U sentence-transformers
 # Import the necessary libraries
 import pandas as pd
 import numpy as np
@@ -9,6 +9,7 @@ from nltk.stem import WordNetLemmatizer
 from gensim.corpora.dictionary import Dictionary
 from gensim.models import Word2Vec
 from sentence_transformers import SentenceTransformer
+import pickle
 
 
 # Define some important variables
@@ -22,10 +23,12 @@ def tokenizer(text):
 
 	"""Returns the processed text."""  
 
-    text = re.sub(r'[^\w\s]', '', text.lower()) # Keep only words and spaces
-    tokens = [token for token in text.split() if lemmatizer.lemmatize(token) in english_words \
-    		  and token not in stop_words and len(token) > 2] # Keep the english words, delete stopwords, and words of length less than 3
-    return ' '.join(tokens)
+# Keep only words and spaces
+	text = re.sub(r'[^\w\s]', '', text.lower())
+# Keep the english words, delete stopwords, and words of length less than 3    
+	tokens = [token for token in text.split() if lemmatizer.lemmatize(token) in english_words and token not in stop_words and len(token) > 2] 
+
+	return ' '.join(tokens)
 
 
 def document_term_matrix(inputs, vectorizer, min_df, max_df):
@@ -43,14 +46,14 @@ def document_term_matrix(inputs, vectorizer, min_df, max_df):
 			dtm.toarray(): The sparse matrix transformed into a numpy array.
 	"""
 
-    if vectorizer == 'cv':         
-        model = CountVectorizer(min_df=min_df, max_df=max_df)  
-        dtm = model.fit_transform(inputs)    
-    else:        
-        model = TfidfVectorizer(min_df=min_df, max_df=max_df, norm=None) 
-        dtm = model.fit_transform(inputs)
+	if vectorizer == 'cv':         
+		model = CountVectorizer(min_df=min_df, max_df=max_df)  
+		dtm = model.fit_transform(inputs)    
+	else:        
+		model = TfidfVectorizer(min_df=min_df, max_df=max_df, norm=None) 
+		dtm = model.fit_transform(inputs)
         
-    return model, dtm.toarray()
+	return model, dtm.toarray()
 
 
 # Necessary for evaluating the several models.
@@ -70,10 +73,10 @@ def get_dictionary(model, articles, min_df, size):
 			w2v: The w2v model built on the dictionary.
 	"""
 
-    bow = [[token for token in article.split() if token in model.vocabulary_] for article in articles] 
-    dictionary = Dictionary(bow)
-    w2v = Word2Vec(bow, size=size, min_count=min_df)
-    return bow, dictionary, w2v
+	bow = [[token for token in article.split() if token in model.vocabulary_] for article in articles] 
+	dictionary = Dictionary(bow)
+	w2v = Word2Vec(bow, size=size, min_count=min_df)
+	return bow, dictionary, w2v
 
 
 # Deep Learning models preprocessing.
@@ -91,10 +94,10 @@ def dataset(dtm, batch_size):
 			train_loader: An iterable over the dataset.			 
 	"""
 
-    X_tensor = torch.FloatTensor(dtm)
-    train_data = TensorDataset(X_tensor, X_tensor)
-    train_loader = DataLoader(train_data, batch_size=batch_size)       
-    return train_loader   
+	X_tensor = torch.FloatTensor(dtm)
+	train_data = TensorDataset(X_tensor, X_tensor)
+	train_loader = DataLoader(train_data, batch_size=batch_size)       
+	return train_loader   
 
 
 # Contextualized topic models preprocessing.
@@ -133,12 +136,12 @@ def dataset_creation(dtm, sent_embeddings):
 					 embeddings.
 	"""
 
-    dataset = []
+	dataset = []
 
-    for i, j in zip(dtm, sent_embeddings):
-        dataset.append({'X':i, 'X_bert':torch.FloatTensor(j)})
+	for i, j in zip(dtm, sent_embeddings):
+		dataset.append({'X':i, 'X_bert':torch.FloatTensor(j)})
 
-    return dataset
+	return dataset
 
 
 # Embedding matrix creation for the ETM model.
@@ -159,13 +162,13 @@ def glove_embeddings(tfidf, vocab_size, embedding_dict):
 
 	"""
 
-    embedding_matrix = np.zeros(shape=(vocab_size, 300))
+	embedding_matrix = np.zeros(shape=(vocab_size, 300))
     
-    for word, index in tfidf.vocabulary_.items():
-        if word in embeddings_dict.keys():
-            embedding_matrix[index] = embeddings_dict[word]
+	for word, index in tfidf.vocabulary_.items():
+		if word in embeddings_dict.keys():
+			embedding_matrix[index] = embeddings_dict[word]
 
-    return embedding_matrix
+	return embedding_matrix
 
 
 def word2vec_embeddings(tfidf, vocab_size, w2v):
@@ -184,10 +187,10 @@ def word2vec_embeddings(tfidf, vocab_size, w2v):
 
 	"""
 
-    embedding_matrix = np.zeros(shape=(vocab_size, 100))
+	embedding_matrix = np.zeros(shape=(vocab_size, 100))
     
-    for word, index in tfidf.vocabulary_.items():
-        if word in w2v.vocab.keys():
-            embedding_matrix[index] = w2v[word]
+	for word, index in tfidf.vocabulary_.items():
+		if word in w2v.wv.vocab.keys():
+			embedding_matrix[index] = w2v[word]
 
-    return embedding_matrix	
+	return embedding_matrix

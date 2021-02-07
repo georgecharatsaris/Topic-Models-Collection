@@ -44,8 +44,8 @@ class CoherenceScores():
             local_similarity = []
         
             for word1, word2 in combinations(topic, 2):
-                if word1 in self.w2v.vocab and word2 in self.w2v.vocab:                    
-                    local_similarity.append(self.w2v.similarity(word1, word2))
+                if word1 in self.w2v.wv.vocab and word2 in self.w2v.wv.vocab:                    
+                    local_similarity.append(self.w2v.wv.similarity(word1, word2))
         
             similarity.append(np.mean(local_similarity))
     
