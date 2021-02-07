@@ -81,15 +81,15 @@ def train_model(train_loader, model, optimizer, epochs, device):
 
 		Arguments:
 
-				train_loader: An iterable over the dataset.
-				model: The ProdLDA model.
-				optimizer: The optimizer for updating ProdLDA's paratemeters.
-				epochs: The number of the training iterations.
-				device: 'cuda' or 'cpu'.
+			train_loader: An iterable over the dataset.
+			model: The ProdLDA model.
+			optimizer: The optimizer for updating ProdLDA's paratemeters.
+			epochs: The number of the training iterations.
+			device: 'cuda' or 'cpu'.
 
-			Returns:
+		Returns:
 
-				train_losses: A list of the model's losses during the training. Its length is equal to the number of epochs.
+			train_losses: A list of the model's losses during the training. Its length is equal to the number of epochs.
 
 		"""
 
