@@ -6,6 +6,8 @@ import torch.optim as optim
 import numpy as np
 from torch.utils.data import TensorDataset, DataLoader
 import pandas as pd
+from preprocessing import tokenizer, document_term_matrix, get_dictionary, dataset
+from evaluation.metrics import CoherenceScores
 
 
 class ProdLDA(nn.Module):
@@ -82,7 +84,7 @@ def train_model(train_loader, model, optimizer, epochs, device):
 			train_loader: An iterable over the dataset.
 			model: The ProdLDA model.
 			optimizer: The optimizer for updating ProdLDA's paratemeters.
-			epoch: The number of the training iterations.
+			epochs: The number of the training iterations.
 			device: 'cuda' or 'cpu'.
 
 		Returns:
@@ -114,7 +116,7 @@ def train_model(train_loader, model, optimizer, epochs, device):
     return train_losses
 
 
-def get_topics(cv, model, num_topics):
+def get_topics(cv, model, num_topics, top_words):
 
 	"""Returns a list of lists of the top 10 words for each topic.
 
@@ -123,6 +125,7 @@ def get_topics(cv, model, num_topics):
 			cv: The CountVectorizer from preprocessing.py.
 			model: The ProdLDA model.
 			num_topics: The number of topics.
+            top_words: The number of the top words for each topics.
 
 		Returns:
 
@@ -135,10 +138,54 @@ def get_topics(cv, model, num_topics):
 	topic_list = []
 	  
 	for topic in topics:
-	    topic_list.append([cv.get_feature_names()[j] for j in topic.argsort()[-10:]])
+	    topic_list.append([cv.get_feature_names()[j] for j in topic.argsort()[-top_words:]])
 
 # Save the resulted list of lists of words for each topic setting
 	df = pd.DataFrame(np.array(topic_list).T, columns=[f'Topic {i + 1}' for i in range(num_topics)])
 	df.to_excel(f'ProdLDA_{num_topics}.xlsx')
 
 	return topic_list
+
+
+if __name__ == '__main__':
+
+# Define the dataset and the arguments
+    df = pd.read_csv('HeinOnline.csv')
+    articles = df['content']
+    min_df = 2
+    max_df = 0.7
+    num_topics = 20
+    size = 100
+
+# Generate the document term matrix and the vectorizer
+    processed_articles = articles.apply(tokenizer)
+    cv, dtm = document_term_matrix(processed_articles, 'cv', min_df, max_df)
+# Generate the bag-of-words, the dictionary, and the word2vec model trained on the dataset
+    bow, dictionary, w2v = get_dictionary(cv, articles, min_df, size)
+
+# Some other arguments
+    vocab_size = dtm.shape[1]
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    batch_size = 64
+    num_topics = 20
+    epochs = 100
+    top_words = 10
+
+# Create the train loader
+    train_loader = dataset(dtm, batch_size)
+
+# Define the model and the optimizer
+    prodLDA = ProdLDA(vocab_size, num_topics, batch_size, device).to(device)
+    optimizer = optim.Adam(prodLDA.parameters(), lr=0.002, betas=(0.9, 0.999))
+
+# Train the model
+    train_model(train_loader, prodLDA, optimizer, epochs, device)
+
+# Create the list of lists of the top 10 words of each topic
+    topic_list = get_topics(cv, prodLDA, num_topics, top_words)
+
+# Calculate the coherence scores
+    evaluation_model = CoherenceScores(topic_list, bow, dictionary, w2v)
+    coherence_scores = evaluation_model.get_coherence_scores()
+# Print the coherence scores C_V, NPMI, UCI, and C_W2V, respectively
+    print(coherence_scores)

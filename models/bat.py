@@ -5,6 +5,8 @@ import torch.optim as optim
 import numpy as np
 import pandas as pd
 from torch.utils.data import DataLoader, TensorDataset
+from preprocessing import tokenizer, document_term_matrix, get_dictionary, dataset
+from evaluation.metrics import CoherenceScores
 
 
 class Encoder(nn.Module):
@@ -148,7 +150,7 @@ def train_model(discriminator, generator, encoder, optimizer_d, optimizer_g, opt
     return train_losses
 
 
-def get_topics(tfidf, model, num_topics, device):
+def get_topics(tfidf, model, num_topics, top_words, device):
 
 	"""Returns a list of lists of the top 10 words for each topic.
 
@@ -157,6 +159,7 @@ def get_topics(tfidf, model, num_topics, device):
 			tfidf: The TfidfVectorizer from preprocessing.py.
 			model: The Generator.
 			num_topics: The number of topics.
+            top_words: The number of the top words for each topics.
 			device: 'cpu' or 'cuda'.
 
 		Returns:
@@ -172,10 +175,60 @@ def get_topics(tfidf, model, num_topics, device):
     topic_list = []
 
     for topic in topic_word_matrix:        
-        topic_list.append([tfidf.get_feature_names()[j] for j in topic.argsort()[-10:]])
+        topic_list.append([tfidf.get_feature_names()[j] for j in topic.argsort()[-top_words:]])
 
 # Save the resulted list of lists of words for each topic setting
     df = pd.DataFrame(np.array(topic_list).T, columns=[f'Topic {i + 1}' for i in range(num_topics)])
     df.to_excel(f'BAT_{num_topics}.xlsx')
 
     return topic_list
+
+
+if __name__ == '__main__':
+
+# Define the dataset and the arguments
+    df = pd.read_csv('HeinOnline.csv')
+    articles = df['content']
+    min_df = 2
+    max_df = 0.7
+    num_topics = 20
+    size = 100
+
+# Generate the document term matrix and the vectorizer
+    processed_articles = articles.apply(tokenizer)
+    tfidf, dtm = document_term_matrix(processed_articles, 'tfidf', min_df, max_df)
+# Generate the bag-of-words, the dictionary, and the word2vec model trained on the dataset
+    bow, dictionary, w2v = get_dictionary(tfidf, articles, min_df, size)
+
+# Some other arguments
+    vocab_size = dtm.shape[1]
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    batch_size = 64
+    num_topics = 20
+    epochs = 100
+    n_critic = 5
+    top_words = 10
+
+# Create the train loader
+    train_loader = dataset(dtm, batch_size)
+
+# Define the models and the optimizers
+    encoder = Encoder(vocab_size, num_topics, batch_size).to(device)
+    generator = Generator(vocab_size, num_topics, batch_size).to(device)
+    discriminator = Discriminator(vocab_size, num_topics, batch_size).to(device)
+
+    optimizer_e = optim.Adam(encoder.parameters(), lr=0.0001, betas=(0.5, 0.999))
+    optimizer_g = optim.Adam(generator.parameters(), lr=0.0001, betas=(0.5, 0.999))
+    optimizer_d = optim.Adam(discriminator.parameters(), lr=0.0001, betas=(0.5, 0.999))
+
+# Train the model
+    train_model(discriminator, generator, encoder, optimizer_d, optimizer_g, optimizer_e, epochs, num_topics, n_critic, device)
+
+# Create the list of lists of the top 10 words of each topic
+    topic_list = get_topics(tfidf, generator, num_topics, top_words, device)
+
+# Calculate the coherence scores
+    evaluation_model = CoherenceScores(topic_list, bow, dictionary, w2v)
+    coherence_scores = evaluation_model.get_coherence_scores()
+# Print the coherence scores C_V, NPMI, UCI, and C_W2V, respectively
+    print(coherence_scores)

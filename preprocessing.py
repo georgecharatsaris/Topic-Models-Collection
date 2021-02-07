@@ -1,4 +1,3 @@
-#!pip install -U sentence-transformers
 # Import the necessary libraries
 import pandas as pd
 import numpy as np
@@ -145,7 +144,7 @@ def dataset_creation(dtm, sent_embeddings):
 
 
 # Embedding matrix creation for the ETM model.
-def glove_embeddings(tfidf, vocab_size, embedding_dict):
+def glove_embeddings(tfidf, vocab_size, embeddings_dict):
 
 	"""Returns the embedding matrix containing the glove embeddings.
 
