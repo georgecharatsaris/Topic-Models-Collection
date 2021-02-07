@@ -125,7 +125,7 @@ def get_topics(cv, model, num_topics, top_words):
 			cv: The CountVectorizer from preprocessing.py.
 			model: The ProdLDA model.
 			num_topics: The number of topics.
-            top_words: The number of the top words for each topics.
+			top_words: The number of the top words for each topics.
 
 		Returns:
 
