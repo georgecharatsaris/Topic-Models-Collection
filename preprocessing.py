@@ -8,7 +8,8 @@ from nltk.stem import WordNetLemmatizer
 from gensim.corpora.dictionary import Dictionary
 from gensim.models import Word2Vec
 from sentence_transformers import SentenceTransformer
-import pickle
+import torch
+from torch.utils.data import TensorDataset, DataLoader
 
 
 # Define some important variables

@@ -5,7 +5,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-from torch.utils.data import TensorDataset, DataLoader
 from contextualized_topic_models.models.ctm import CombinedTM
 from preprocessing import tokenizer, document_term_matrix, get_dictionary, sBert_embeddings, dataset_creation
 from evaluation.metrics import CoherenceScores

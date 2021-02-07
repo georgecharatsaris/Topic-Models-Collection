@@ -4,7 +4,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 import torch.optim as optim
-from torch.utils.data import DataLoader, TensorDataset
 import pandas as pd
 from preprocessing import tokenizer, document_term_matrix, get_dictionary, dataset, glove_embeddings, word2vec_embeddings
 from evaluation.metrics import CoherenceScores
