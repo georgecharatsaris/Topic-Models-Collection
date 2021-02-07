@@ -4,6 +4,5 @@ scikit-learn
 numpy
 pandas
 nltk
--U sentence-transformers
--U contextualized_topic_models
-
+sentence-transformers
+contextualized_topic_models
