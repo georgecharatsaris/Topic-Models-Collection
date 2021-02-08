@@ -154,7 +154,7 @@ def train_model(discriminator, generator, encoder, optimizer_d, optimizer_g, opt
 
 def get_topics(tfidf, model, num_topics, top_words, device):
 
-    """Returns a list of lists of the top 10 words for each topic.
+    """Returns a list of lists of the top words for each topic.
 
         Arguments:
 
@@ -166,14 +166,14 @@ def get_topics(tfidf, model, num_topics, top_words, device):
 
         Returns:
 
-            topic_list: A list of lists containing the top 10 words for each topic.
+            topic_list: A list of lists containing the top words for each topic.
 
     """
 
 # Generate the topic-word matrix
     onehot_topic = torch.eye(num_topics, device=device)
     topic_word_matrix = model(onehot_topic)
-    # Create a list of lists of the top 10 words for each topic
+    # Create a list of lists of the top words for each topic
     topic_list = []
 
     for topic in topic_word_matrix:

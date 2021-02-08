@@ -89,7 +89,7 @@ def train_model(train_loader, model, optimizer, epochs, device):
 
 		Returns:
 
-			train_losses: A list of the model's losses during the training. Its length is equal to the number of epochs.
+			train_losses: A list of the model's losses during the training. 
 
 		"""
 
@@ -118,7 +118,7 @@ def train_model(train_loader, model, optimizer, epochs, device):
 
 def get_topics(cv, model, num_topics, top_words):
 
-	"""Returns a list of lists of the top 10 words for each topic.
+	"""Returns a list of lists of the top words for each topic.
 
 		Arguments:
 
@@ -129,12 +129,12 @@ def get_topics(cv, model, num_topics, top_words):
 
 		Returns:
 
-			topic_list: A list of lists containing the top 10 words for each topic.
+			topic_list: A list of lists containing the top words for each topic.
 	"""
 
 # Generate the topic-word matrix
 	topics = model.topic_word_matrix
-# Create a list of lists of the top 10 words for each topic
+# Create a list of lists of the top words for each topic
 	topic_list = []
 	  
 	for topic in topics:

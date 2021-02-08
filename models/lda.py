@@ -8,7 +8,7 @@ from evaluation.metrics import CoherenceScores
 
 def LDA(dtm, cv, num_topics, top_words):
 
-	"""Returns a list of lists of the top 10 words for each topic.
+	"""Returns a list of lists of the top words for each topic.
 
 		Arguments:
 
@@ -19,7 +19,7 @@ def LDA(dtm, cv, num_topics, top_words):
 
 		Returns:
 
-			topic_list: A list of lists containing the top specified number of words for each topic.
+			topic_list: A list of lists containing the top words for each topic.
 	"""
 
 	lda = LatentDirichletAllocation(n_components=num_topics, doc_topic_prior=50/num_topics, topic_word_prior=0.01, random_state=101)
@@ -28,7 +28,7 @@ def LDA(dtm, cv, num_topics, top_words):
 
 # Generate the topic-word matrix
 	topics = lda.components_
-# Create a list of lists of the top 10 words for each topic
+# Create a list of lists of the top words for each topic
 	topic_list = []
 
 	for topic in topics:

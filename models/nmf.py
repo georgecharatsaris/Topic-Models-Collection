@@ -4,11 +4,12 @@ import pandas as pd
 from sklearn.decomposition import NMF as model
 from preprocessing import tokenizer, document_term_matrix, get_dictionary
 from evaluation.metrics import CoherenceScores
+from sklearn.preprocessing import normalize
 
 
 def NMF(dtm, tfidf, num_topics, top_words):
 
-	"""Returns a list of lists of the top 10 words for each topic.
+	"""Returns a list of lists of the top words for each topic.
 
 		Arguments:
 
@@ -19,7 +20,7 @@ def NMF(dtm, tfidf, num_topics, top_words):
 
 		Returns:
 
-			topic_list: A list of lists containing the top 10 words for each topic.
+			topic_list: A list of lists containing the top words for each topic.
 	"""
 
 	nmf = model(n_components=num_topics, max_iter=500, random_state=101)
@@ -27,8 +28,8 @@ def NMF(dtm, tfidf, num_topics, top_words):
 	nmf.fit(dtm)
 
 # Generate the topic-word matrix
-	topics = lda.components_
-# Create a list of lists of the top 10 words for each topic
+	topics = nmf.components_
+# Create a list of lists of the top words for each topic
 	topic_list = []
 
 	for topic in topics:

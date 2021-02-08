@@ -6,3 +6,4 @@ pandas
 nltk
 sentence-transformers
 contextualized_topic_models
+openpyxl

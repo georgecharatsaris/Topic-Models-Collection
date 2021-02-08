@@ -12,23 +12,23 @@ from sklearn.preprocessing import normalize
 
 class ETM(nn.Module):
 
-    def __init__(self, vocab_size, num_topics, batch_size, word2vec, device):
+    def __init__(self, vocab_size, num_topics, batch_size, word2vec, weights, device):
         super(ETM, self).__init__()
         self.batch_size = batch_size
         self.device = device
 
         if word2vec == True:
-            self.rho = nn.Embedding.from_pretrained(weight)
+            self.rho = nn.Embedding.from_pretrained(weights)
             self.alphas = nn.Linear(100, num_topics, bias=False)
         else:
-            self.rho = nn.Embedding.from_pretrained(weight)
+            self.rho = nn.Embedding.from_pretrained(weights)
             self.alphas = nn.Linear(300, num_topics, bias=False)
 
         self.encoder = nn.Sequential(
-            nn.Linear(vocab_size, 800),
-            nn.Softplus(),
-            nn.Linear(800, 800),
-            nn.Softplus()
+        nn.Linear(vocab_size, 800),
+        nn.Softplus(),
+        nn.Linear(800, 800),
+        nn.Softplus()
         )
 
         self.mean = nn.Linear(800, num_topics)
@@ -40,12 +40,12 @@ class ETM(nn.Module):
 
     def encode(self, inputs):
         x = self.encoder(inputs)
-        
+
         posterior_mean = self.mean_bn(self.mean(x))
         posterior_logvar = self.logvar_bn(self.logvar(x))
 
         KL_divergence = 0.5*torch.sum(1 + posterior_logvar - posterior_mean**2 - torch.exp(posterior_logvar), 1)
-        
+
         return posterior_mean, posterior_logvar, torch.mean(KL_divergence)
 
     def reparameterization(self, posterior_mean, posterior_logvar):
@@ -56,6 +56,7 @@ class ETM(nn.Module):
 
     def get_beta(self):
         beta = F.softmax(self.alphas(self.rho.weight), 0)
+
         return beta.transpose(1, 0)
 
     def get_theta(self, normalized_inputs):
@@ -72,7 +73,8 @@ class ETM(nn.Module):
         return prediction
 
     def forward(self, inputs, normalized_inputs):
-        batch_size = inputs.shape[0] 
+        batch_size = inputs.shape[0]
+
         if self.batch_size != batch_size:
             self.batch_size = batch_size
 
@@ -87,24 +89,24 @@ class ETM(nn.Module):
 
 def train_model(train_loader, model, optimizer, epochs, device):
 
-	"""Return a list of lists each containing the Discriminator's, Generator's and Encoder's loss, respectively.
+    """Return a list of lists each containing the Discriminator's, Generator's and Encoder's loss, respectively.
 
-		Arguments:
-			
-			train_loader: An iterable over the dataset.
-			model: The ETM model.
-			optimizer: The optimizer for updating ETM's paratemeters.
-			epochs: The number of the training iterations.
-			device: 'cuda' or 'cpu'.
+        Arguments:
 
-		Returns:
-			
-			train_losses: A list of lists each containing the Discriminator's, Generator's and Encoder's loss, respectively.
-			
-	"""
+            train_loader: An iterable over the dataset.
+            model: The ETM model.
+            optimizer: The optimizer for updating ETM's paratemeters.
+            epochs: The number of the training iterations.
+            device: 'cuda' or 'cpu'.
+
+        Returns:
+
+            train_losses: A list of lists each containing the Discriminator's, Generator's and Encoder's loss, respectively.
+
+    """
 
     model.train()
-    
+
     for epoch in range(epochs):
         losses = []
         train_losses = []
@@ -123,32 +125,32 @@ def train_model(train_loader, model, optimizer, epochs, device):
             total += 1
 
         epoch_loss = sum(losses)/total
-        train_losses.append(epoch_loss)        
+        train_losses.append(epoch_loss)
         print(f'Epoch {epoch + 1}/{epochs}, Loss={epoch_loss}')
 
-        return train_losses
+    return train_losses
 
 
 def get_topics(model, tfidf, num_topics, top_words):
 
-	"""Returns a list of lists of the top 10 words for each topic.
+    """Returns a list of lists of the top words for each topic.
 
-		Arguments:
-			
-			model: The ETM model.
-			tfidf: The TfidfVectorizer from preprocessing.py.
-			num_topics: The number of topics.
+        Arguments:
+
+            model: The ETM model.
+            tfidf: The TfidfVectorizer from preprocessing.py.
+            num_topics: The number of topics.
             top_words: The number of the top words for each topics.
 
-		Returns:
+        Returns:
 
-			topic_list: A list of lists containing the top 10 words for each topic.
-	
-	"""
+            topic_list: A list of lists containing the top words for each topic.
+
+    """
 
 # Generate the topic-word matrix
     beta = model.get_beta()
-# Create a list of lists of the top 10 words for each topic  
+# Create a list of lists of the top words for each topic  
     topic_list = []
 
     for topic in beta:
@@ -186,9 +188,9 @@ if __name__ == '__main__':
     epochs = 100
     n_critic = 5
     top_words = 10
-    embeddings = 'Glove' # or 'Word2Vec'
+    embeddings = 'Word2Vec' # or 'GloVe'
 
-    if embeddings = 'GloVe':
+    if embeddings == 'GloVe':
 # Load the GloVe embeddings
         embeddings_dict = {}
 
@@ -205,12 +207,15 @@ if __name__ == '__main__':
 # Create a matrix containing the Word2Vec embeddings
         embedding_matrix = word2vec_embeddings(tfidf, vocab_size, w2v)
 
+# Make the embedding matrix a float tensor to be used as rho's weights
+    weights = torch.FloatTensor(embedding_matrix)
+
 # Create the train loader
     train_loader = dataset(dtm, batch_size)
 
 # Define the models and the optimizers
-    model = (ETM(vocab_size, num_topics, batch_size, True, device)).to(device)
-    optimizer = optim.Adam(etm.parameters(), lr=0.002, betas=(0.9, 0.999), weight_decay=1.2e-6)
+    model = (ETM(vocab_size, num_topics, batch_size, True, weights, device)).to(device)
+    optimizer = optim.Adam(model.parameters(), lr=0.002, betas=(0.9, 0.999), weight_decay=1.2e-6)
 
 # Train the model
     train_model(train_loader, model, optimizer, epochs, device)
