@@ -5,6 +5,17 @@ from sklearn.decomposition import NMF as model
 from preprocessing import tokenizer, document_term_matrix, get_dictionary
 from evaluation.metrics import CoherenceScores
 from sklearn.preprocessing import normalize
+import argparse
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--vectorizer', type=str, default='tfidf', help='the CountVectorizer from sklearn')
+parser.add_argument('--min_df', type=int, default=2, help='the minimum number of documents containing a word')
+parser.add_argument('--max_df', type=float, default=0.7, help='the maximum number of topics containing a word')
+parser.add_argument('--size', type=int, default=100, help='the size of the w2v embeddings')
+parser.add_argument('--num_topics', type=int, default=20, help='the number of topics')
+parser.add_argument('--top_words', type=int, default=10, help='the number of top words for each topic')
+opt = parser.parse_args()
 
 
 def NMF(dtm, tfidf, num_topics, top_words):
@@ -43,27 +54,19 @@ def NMF(dtm, tfidf, num_topics, top_words):
 
 
 if __name__ == '__main__':
-
 # Define the dataset and the arguments
 	df = pd.read_csv('HeinOnline.csv')
 	articles = df['content']
-	min_df = 2
-	max_df = 0.7
-	size = 100
 
 # Generate the document term matrix and the vectorizer
 	processed_articles = articles.apply(tokenizer)
-	tfidf, dtm = document_term_matrix(processed_articles, 'tfidf', min_df, max_df)
+	tfidf, dtm = document_term_matrix(processed_articles, opt.vectorizer, opt.min_df, opt.max_df)
 	dtm = normalize(dtm)
 # Generate the bag-of-words, the dictionary, and the word2vec model trained on the dataset
-	bow, dictionary, w2v = get_dictionary(tfidf, articles, min_df, size)
-
-# Some other arguments
-	num_topics = 20
-	top_words = 10
+	bow, dictionary, w2v = get_dictionary(tfidf, articles, opt.min_df, opt.size)
 
 # Create the list of lists of the top 10 words of each topic
-	topic_list = NMF(dtm, tfidf, num_topics, top_words)
+	topic_list = NMF(dtm, tfidf, opt.num_topics, opt.top_words)
 
 # Calculate the coherence scores
 	evaluation_model = CoherenceScores(topic_list, bow, dictionary, w2v)

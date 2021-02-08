@@ -8,16 +8,37 @@ import pandas as pd
 from preprocessing import tokenizer, document_term_matrix, get_dictionary, dataset, glove_embeddings, word2vec_embeddings
 from evaluation.metrics import CoherenceScores
 from sklearn.preprocessing import normalize
+import argparse
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--vectorizer', type=str, default='tfidf', help='the TfidfVectorizer from sklearn')
+parser.add_argument('--min_df', type=int, default=2, help='the minimum number of documents containing a word')
+parser.add_argument('--max_df', type=float, default=0.7, help='the maximum number of topics containing a word')
+parser.add_argument('--size', type=int, default=100, help='the size of the w2v embeddings')
+parser.add_argument('--num_topics', type=int, default=20, help='the number of topics')
+parser.add_argument('--top_words', type=int, default=10, help='the number of top words for each topic')
+parser.add_argument('--epochs', type=int, default=100, help='the number of the training iterations')
+parser.add_argument('--batch_size', type=int, default=64, help='the size of the batches')
+parser.add_argument('--lr', type=float, default=0.002, help='the learning rate of Adam')
+parser.add_argument('--b1', type=float, default=0.9, help='the decay of first order momentum of gradient for Adam')
+parser.add_argument('--b2', type=float, default=0.999, help='the decay of first order momentum of gradient for Adam')
+parser.add_argument('--embeddings', type=str, default='Word2Vec', help='Word2Vec or GloVe')
+parser.add_argument('--decay', type=float, default=1.2e-6, help='some l2 regularization')
+opt = parser.parse_args()
+
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 class ETM(nn.Module):
 
-    def __init__(self, vocab_size, num_topics, batch_size, word2vec, weights, device):
+    def __init__(self, vocab_size, num_topics, batch_size, embeddings, weights, device):
         super(ETM, self).__init__()
         self.batch_size = batch_size
         self.device = device
 
-        if word2vec == True:
+        if embeddings == 'Word2Vec':
             self.rho = nn.Embedding.from_pretrained(weights)
             self.alphas = nn.Linear(100, num_topics, bias=False)
         else:
@@ -168,29 +189,15 @@ if __name__ == '__main__':
 # Define the dataset and the arguments
     df = pd.read_csv('HeinOnline.csv')
     articles = df['content']
-    min_df = 2
-    max_df = 0.7
-    num_topics = 20
-    size = 100
 
 # Generate the document term matrix and the vectorizer
     processed_articles = articles.apply(tokenizer)
-    tfidf, dtm = document_term_matrix(processed_articles, 'tfidf', min_df, max_df)
+    tfidf, dtm = document_term_matrix(processed_articles, opt.vectorizer, opt.min_df, opt.max_df)
     dtm = normalize(dtm)
 # Generate the bag-of-words, the dictionary, and the word2vec model trained on the dataset
-    bow, dictionary, w2v = get_dictionary(tfidf, articles, min_df, size)
+    bow, dictionary, w2v = get_dictionary(tfidf, articles, opt.min_df, opt.size)
 
-# Some other arguments
-    vocab_size = dtm.shape[1]
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    batch_size = 64
-    num_topics = 20
-    epochs = 100
-    n_critic = 5
-    top_words = 10
-    embeddings = 'Word2Vec' # or 'GloVe'
-
-    if embeddings == 'GloVe':
+    if opt.embeddings == 'GloVe':
 # Load the GloVe embeddings
         embeddings_dict = {}
 
@@ -211,17 +218,18 @@ if __name__ == '__main__':
     weights = torch.FloatTensor(embedding_matrix)
 
 # Create the train loader
-    train_loader = dataset(dtm, batch_size)
+    train_loader = dataset(dtm, opt.batch_size)
 
 # Define the models and the optimizers
-    model = (ETM(vocab_size, num_topics, batch_size, True, weights, device)).to(device)
-    optimizer = optim.Adam(model.parameters(), lr=0.002, betas=(0.9, 0.999), weight_decay=1.2e-6)
+    vocab_size = dtm.shape[1]
+    model = (ETM(vocab_size, opt.num_topics, opt.batch_size, opt.embeddings, weights, device)).to(device)
+    optimizer = optim.Adam(model.parameters(), lr=opt.lr, betas=(opt.b1, opt.b2), weight_decay=opt.decay)
 
 # Train the model
-    train_model(train_loader, model, optimizer, epochs, device)
+    train_model(train_loader, model, optimizer, opt.epochs, device)
 
 # Create the list of lists of the top 10 words of each topic
-    topic_list = get_topics(model, tfidf, num_topics, top_words)
+    topic_list = get_topics(model, tfidf, opt.num_topics, opt.top_words)
 
 # Calculate the coherence scores
     evaluation_model = CoherenceScores(topic_list, bow, dictionary, w2v)

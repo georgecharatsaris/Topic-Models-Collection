@@ -6,6 +6,26 @@ import numpy as np
 import pandas as pd
 from preprocessing import tokenizer, document_term_matrix, get_dictionary, dataset
 from evaluation.metrics import CoherenceScores
+import argparse
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--vectorizer', type=str, default='tfidf', help='the TfidfVectorizer from sklearn')
+parser.add_argument('--min_df', type=int, default=2, help='the minimum number of documents containing a word')
+parser.add_argument('--max_df', type=float, default=0.7, help='the maximum number of topics containing a word')
+parser.add_argument('--size', type=int, default=100, help='the size of the w2v embeddings')
+parser.add_argument('--num_topics', type=int, default=20, help='the number of topics')
+parser.add_argument('--top_words', type=int, default=10, help='the number of top words for each topic')
+parser.add_argument('--epochs', type=int, default=100, help='the number of the training iterations')
+parser.add_argument('--batch_size', type=int, default=64, help='the size of the batches')
+parser.add_argument('--lr', type=float, default=0.0001, help='the learning rate of Adam')
+parser.add_argument('--b1', type=float, default=0.5, help='the decay of first order momentum of gradient for Adam')
+parser.add_argument('--b2', type=float, default=0.999, help='the decay of first order momentum of gradient for Adam')
+parser.add_argument('--n_critic', type=int, default=5, help='the number of discriminator iterations per generator iteration')
+opt = parser.parse_args()
+
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 class Encoder(nn.Module):
@@ -191,43 +211,31 @@ if __name__ == '__main__':
 # Define the dataset and the arguments
     df = pd.read_csv('HeinOnline.csv')
     articles = df['content']
-    min_df = 2
-    max_df = 0.7
-    num_topics = 20
-    size = 100
 
 # Generate the document term matrix and the vectorizer
     processed_articles = articles.apply(tokenizer)
-    tfidf, dtm = document_term_matrix(processed_articles, 'tfidf', min_df, max_df)
+    tfidf, dtm = document_term_matrix(processed_articles, opt.vectorizer, opt.min_df, opt.max_df)
 # Generate the bag-of-words, the dictionary, and the word2vec model trained on the dataset
-    bow, dictionary, w2v = get_dictionary(tfidf, articles, min_df, size)
-
-# Some other arguments
-    vocab_size = dtm.shape[1]
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    batch_size = 64
-    num_topics = 20
-    epochs = 100
-    n_critic = 5
-    top_words = 10
+    bow, dictionary, w2v = get_dictionary(tfidf, articles, opt.min_df, opt.size)
 
 # Create the train loader
     train_loader = dataset(dtm, batch_size)
 
 # Define the models and the optimizers
-    encoder = Encoder(vocab_size, num_topics, batch_size).to(device)
-    generator = Generator(vocab_size, num_topics, batch_size).to(device)
-    discriminator = Discriminator(vocab_size, num_topics, batch_size).to(device)
+    vocab_size = dtm.shape[1]
+    encoder = Encoder(vocab_size, opt.num_topics, opt.batch_size).to(device)
+    generator = Generator(vocab_size, opt.num_topics, opt.batch_size).to(device)
+    discriminator = Discriminator(vocab_size, opt.num_topics, opt.batch_size).to(device)
 
-    optimizer_e = optim.Adam(encoder.parameters(), lr=0.0001, betas=(0.5, 0.999))
-    optimizer_g = optim.Adam(generator.parameters(), lr=0.0001, betas=(0.5, 0.999))
-    optimizer_d = optim.Adam(discriminator.parameters(), lr=0.0001, betas=(0.5, 0.999))
+    optimizer_e = optim.Adam(encoder.parameters(), lr=opt.lr, betas=(opt.b1, opt.b12))
+    optimizer_g = optim.Adam(generator.parameters(), lr=opt.lr, betas=(opt.b1, opt.b2))
+    optimizer_d = optim.Adam(discriminator.parameters(), lr=opt.lr, betas=(opt.b1, opt.b2))
 
 # Train the model
-    train_model(discriminator, generator, encoder, optimizer_d, optimizer_g, optimizer_e, epochs, num_topics, n_critic, device)
+    train_model(discriminator, generator, encoder, optimizer_d, optimizer_g, optimizer_e, opt.epochs, opt.num_topics, opt.n_critic, device)
 
 # Create the list of lists of the top 10 words of each topic
-    topic_list = get_topics(tfidf, generator, num_topics, top_words, device)
+    topic_list = get_topics(tfidf, generator, opt.num_topics, opt.top_words, device)
 
 # Calculate the coherence scores
     evaluation_model = CoherenceScores(topic_list, bow, dictionary, w2v)

@@ -8,6 +8,23 @@ import torch.nn.functional as F
 from contextualized_topic_models.models.ctm import CombinedTM
 from preprocessing import tokenizer, document_term_matrix, get_dictionary, sBert_embeddings, dataset_creation
 from evaluation.metrics import CoherenceScores
+import argparse
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--vectorizer', type=str, default='cv', help='the CountVectorizer from sklearn')
+parser.add_argument('--min_df', type=int, default=2, help='the minimum number of documents containing a word')
+parser.add_argument('--max_df', type=float, default=0.7, help='the maximum number of topics containing a word')
+parser.add_argument('--size', type=int, default=100, help='the size of the w2v embeddings')
+parser.add_argument('--num_topics', type=int, default=20, help='the number of topics')
+parser.add_argument('--top_words', type=int, default=10, help='the number of top words for each topic')
+parser.add_argument('--epochs', type=int, default=100, help='the number of the training iterations')
+parser.add_argument('--batch_size', type=int, default=64, help='the size of the batches')
+parser.add_argument('--bert_size', type=int, default=768, help='the size of the bert embeddings')
+opt = parser.parse_args()
+
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def CTM(dataset, cv, vocab_size, bert_size, num_topics, top_words, epochs):
@@ -50,25 +67,15 @@ if __name__ == '__main__':
 # Define the dataset and the arguments
 	df = pd.read_csv('HeinOnline.csv')
 	articles = df['content']
-	min_df = 2
-	max_df = 0.7
-	num_topics = 20
-	size = 100
 
 # Generate the document term matrix and the vectorizer
 	processed_articles = articles.apply(tokenizer)
-	cv, dtm = document_term_matrix(processed_articles, 'cv', min_df, max_df)
+	cv, dtm = document_term_matrix(processed_articles, opt.vectorizer, opt.min_df, opt.max_df)
 # Generate the bag-of-words, the dictionary, and the word2vec model trained on the dataset
-	bow, dictionary, w2v = get_dictionary(cv, articles, min_df, size)
+	bow, dictionary, w2v = get_dictionary(cv, articles, opt.min_df, opt.size)
 
 # Some other arguments
-	vocab_size = dtm.shape[1]
-	device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-	batch_size = 64
-	num_topics = 20
-	bert_size = 768
-	epochs = 100
-	top_words = 10
+	
 
 # Generate the sBert embeddings
 	sent_embeddings = sBert_embeddings(articles, device)
@@ -77,7 +84,8 @@ if __name__ == '__main__':
 	dataset = dataset_creation(dtm, sent_embeddings)
 
 # Generate the list of lists of the top 10 words of each topic and the proportion of topics over the documents
-	topic_list = CTM(dataset, cv, vocab_size, bert_size, num_topics, top_words, epochs)
+	vocab_size = dtm.shape[1]
+	topic_list = CTM(dataset, cv, vocab_size, opt.bert_size, opt.num_topics, opt.top_words, opt.epochs)
 
 # Calculate the coherence scores
 	evaluation_model = CoherenceScores(topic_list, bow, dictionary, w2v)
