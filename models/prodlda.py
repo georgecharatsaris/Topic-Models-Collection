@@ -190,7 +190,7 @@ def get_doc_topic_list(model, train_loader, dtm, device):
         for inputs, _ in train_loader:
             inputs = inputs.to(device)
 
-            mean, std, _ = model.encoder(inputs)
+			mean, std, _ = model.encoder(inputs)
 			z = model.reparameterization(mu, std)
 			doc_topic_dist = F.softmax(z, 1)
 
