@@ -166,6 +166,44 @@ def get_topics(cv, model, num_topics, top_words):
 	return topic_list
 
 
+def get_doc_topic_list(model, train_loader, dtm, device):
+
+    """Return the list of the topic of each document.
+
+        Arguments:
+
+            model: The ProdLDA model.
+            train_loader: An iterable over the dataset.
+            dtm: An array representing the document term matrix.
+			device: 'cpu' or 'cuda'
+
+        Returns:
+
+            doc_topic_list: A list of the topic assigned to each document by ETM.        
+
+    """
+
+    model.eval()
+    flag = True
+    
+    with torch.no_grad():
+        for inputs, _ in train_loader:
+            inputs = inputs.to(device)
+
+            mean, std, _ = model.encoder(inputs)
+			z = model.reparameterization(mu, std)
+			doc_topic_dist = F.softmax(z, 1)
+
+            if flag == True:
+                doc_topic_matrix = doc_topic_dist.argmax(axis=1)
+                flag = False
+            else:
+                doc_topic_matrix = torch.cat((doc_topic_matrix, doc_topic_dist.argmax(axis=1)), axis=0)
+
+    doc_topic_list = np.array(doc_topic_matrix.cpu())   
+    return doc_topic_list
+
+
 if __name__ == '__main__':
 # Define the dataset and the arguments
 	df = pd.read_csv('HeinOnline.csv')
@@ -190,6 +228,11 @@ if __name__ == '__main__':
 
 # Create the list of lists of the top 10 words of each topic
 	topic_list = get_topics(cv, prodLDA, opt.num_topics, opt.top_words)
+
+# Print the title of the document and its topic based on ETM
+    doc_topic_list = get_doc_topic_list(prodLDA, train_loader, dtm, device)
+    df['Topic'] = doc_topic_list
+    print(df[['title', 'Topic']])	
 
 # Calculate the coherence scores
 	evaluation_model = CoherenceScores(topic_list, bow, dictionary, w2v)
