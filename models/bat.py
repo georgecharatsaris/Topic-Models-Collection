@@ -247,7 +247,7 @@ if __name__ == '__main__':
     generator = Generator(vocab_size, opt.num_topics, opt.batch_size).to(device)
     discriminator = Discriminator(vocab_size, opt.num_topics, opt.batch_size).to(device)
 
-    optimizer_e = optim.Adam(encoder.parameters(), lr=opt.lr, betas=(opt.b1, opt.b12))
+    optimizer_e = optim.Adam(encoder.parameters(), lr=opt.lr, betas=(opt.b1, opt.b2))
     optimizer_g = optim.Adam(generator.parameters(), lr=opt.lr, betas=(opt.b1, opt.b2))
     optimizer_d = optim.Adam(discriminator.parameters(), lr=opt.lr, betas=(opt.b1, opt.b2))
 
