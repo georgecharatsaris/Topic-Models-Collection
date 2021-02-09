@@ -47,7 +47,7 @@ def LDA(dtm, cv, num_topics, top_words):
 
 # Save the resulted list of lists of words for each topic setting
 	df = pd.DataFrame(np.array(topic_list).T, columns=[f'Topic {i + 1}' for i in range(num_topics)])
-	df.to_excel(f'C:/Users/gxara/Downloads/LDA_{num_topics}.xlsx')
+	df.to_excel(f'LDA_{num_topics}.xlsx')
 
 # Generate the topic for each document
 	doc_top_matrix = lda.transform(dtm)
@@ -58,7 +58,7 @@ def LDA(dtm, cv, num_topics, top_words):
 
 if __name__ == '__main__':
 # Define the dataset and the arguments
-	df = pd.read_csv('C:/Users/gxara/Downloads/HeinOnline/HeinOnline.csv')
+	df = pd.read_csv('HeinOnline.csv')
 	articles = df['content']
 
 # Generate the document term matrix and the vectorizer
@@ -69,6 +69,7 @@ if __name__ == '__main__':
 
 # Create the list of lists of the top words of each topic
 	topic_list, doc_topic_list = LDA(dtm, cv, opt.num_topics, opt.top_words)
+	
 # Print the title of the document and its topic based on the LDA
 	df['Topic'] = doc_topic_list
 	print(df[['title', 'Topic']])

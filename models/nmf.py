@@ -50,7 +50,11 @@ def NMF(dtm, tfidf, num_topics, top_words):
 	df = pd.DataFrame(np.array(topic_list).T, columns=[f'Topic {i + 1}' for i in range(num_topics)])
 	df.to_excel(f'NMF_{num_topics}.xlsx')
 
-	return topic_list
+# Generate the topic for each document
+	doc_top_matrix = lda.transform(dtm)
+	doc_topic_list = doc_top_matrix.argmax(axis=1)
+
+	return topic_list, doc_topic_list
 
 
 if __name__ == '__main__':
@@ -66,7 +70,11 @@ if __name__ == '__main__':
 	bow, dictionary, w2v = get_dictionary(tfidf, articles, opt.min_df, opt.size)
 
 # Create the list of lists of the top 10 words of each topic
-	topic_list = NMF(dtm, tfidf, opt.num_topics, opt.top_words)
+	topic_list, doc_topic_list = NMF(dtm, tfidf, opt.num_topics, opt.top_words)
+		
+# Print the title of the document and its topic based on the LDA
+	df['Topic'] = doc_topic_list
+	print(df[['title', 'Topic']])
 
 # Calculate the coherence scores
 	evaluation_model = CoherenceScores(topic_list, bow, dictionary, w2v)

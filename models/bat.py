@@ -205,6 +205,26 @@ def get_topics(tfidf, model, num_topics, top_words, device):
 
     return topic_list
 
+def get_doc_topic_list(dtm, model):
+
+    """Return of list of the topic of each document.
+
+        Arguments:
+
+            dtm: An array representing the document term matrix.
+            model: The Encoder.
+
+        Returns:
+
+            doc_topic_list: A list of the topics assigned to each document by the Encoder.
+
+    """
+    
+    doc_topic_matrix = model(dtm)
+    doc_topic_list = doc_topic_matrix.argmax(axis=1)
+
+    return doc_topic_list
+
 
 if __name__ == '__main__':
 
@@ -236,6 +256,11 @@ if __name__ == '__main__':
 
 # Create the list of lists of the top 10 words of each topic
     topic_list = get_topics(tfidf, generator, opt.num_topics, opt.top_words, device)
+
+# Print the title of the document and its topic based on the LDA
+    doc_topic_list = get_doc_topic_list(dtm, encoder)
+	df['Topic'] = doc_topic_list
+	print(df[['title', 'Topic']])
 
 # Calculate the coherence scores
     evaluation_model = CoherenceScores(topic_list, bow, dictionary, w2v)
