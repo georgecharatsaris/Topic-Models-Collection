@@ -258,8 +258,8 @@ if __name__ == '__main__':
 
 # Print the title of the document and its topic based on the LDA
     doc_topic_list = get_doc_topic_list(dtm, encoder)
-	df['Topic'] = doc_topic_list
-	print(df[['title', 'Topic']])
+    df['Topic'] = doc_topic_list
+    print(df[['title', 'Topic']])
 
 # Calculate the coherence scores
     evaluation_model = CoherenceScores(topic_list, bow, dictionary, w2v)
