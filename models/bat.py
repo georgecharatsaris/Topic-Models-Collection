@@ -76,7 +76,6 @@ class Generator(nn.Module):
         return x
 
 
-
 class Discriminator(nn.Module):
 
     def __init__(self, vocab_size, num_topics, batch_size):
