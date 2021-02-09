@@ -32,7 +32,7 @@ empirical Bayes parameter estimation. We report results in document modeling, te
 classification, and collaborative filtering, comparing to a mixture of unigrams model and 
 the probabilistic LSI model.
 
-[[Paper]](https://jmlr.org/papers/volume3/blei03a/blei03a.pdf) [[Code]](https://github.com/Georgios1993/Topic-Models-Collection/blob/main/models/lda.py)
+[[Paper]](https://jmlr.org/papers/volume3/blei03a/blei03a.pdf) [[Code]](https://github.com/georgecharatsaris/Topic-Models-Collection/blob/main/models/lda.py)
 
 ## Non-Negative Factorization (NMF):
 
@@ -60,7 +60,7 @@ scenarios.Overall, our book chapter cover the broad spectrum of NMF in the conte
 clustering and topic modeling, from fundamental algorithmic behaviors to practical visual 
 analytics systems.
 
-[[Paper]](https://link.springer.com/chapter/10.1007/978-3-319-09259-1_7) [[Code]](https://github.com/Georgios1993/Topic-Models-Collection/blob/main/models/nmf.py)
+[[Paper]](https://link.springer.com/chapter/10.1007/978-3-319-09259-1_7) [[Code]](https://github.com/georgecharatsaris/Topic-Models-Collection/blob/main/models/nmf.py)
 
 ## Autoencoding Variational Inference (ProdLDA):
 
@@ -85,7 +85,7 @@ we present a new topic model called ProdLDA, that replaces the mixture model in 
 product of experts. By changing only one line of code from LDA, we find that ProdLDA yields 
 much more interpretable topics, even if LDA is trained via collapsed Gibbs sampling.
 
-[[Paper]](https://arxiv.org/abs/1703.01488) [[Code]](https://github.com/Georgios1993/Topic-Models-Collection/blob/main/models/prodlda.py)
+[[Paper]](https://arxiv.org/abs/1703.01488) [[Code]](https://github.com/georgecharatsaris/Topic-Models-Collection/blob/main/models/prodlda.py)
 
 ## Neural Topic Modeling with Bidirectional Adversarial Training (BAT):
 
@@ -113,7 +113,7 @@ outperforming several competitive baselines. Moreover, when performing text clus
 on the extracted topics, our models outperform all the baselines, with more significant 
 improvements achieved by Gaussian-BAT where an increase of near 6% is observed in accuracy.
 
-[[Paper]](https://arxiv.org/abs/2004.12331) [[code]](https://github.com/Georgios1993/Topic-Models-Collection/blob/main/models/bat.py)
+[[Paper]](https://arxiv.org/abs/2004.12331) [[code]](https://github.com/georgecharatsaris/Topic-Models-Collection/blob/main/models/bat.py)
 
 ## Topic Models in Embedded Spaces (ETM):
 
@@ -134,7 +134,7 @@ interpretable topics even with large vocabularies that include rare words and st
 It outperforms existing document models, such as latent Dirichlet allocation, in terms of 
 both topic quality and predictive performance.
 
-[[Paper]](https://www.mitpressjournals.org/doi/full/10.1162/tacl_a_00325) [[code]](https://github.com/Georgios1993/Topic-Models-Collection/blob/main/models/etm.py)
+[[Paper]](https://www.mitpressjournals.org/doi/full/10.1162/tacl_a_00325) [[code]](https://github.com/georgecharatsaris/Topic-Models-Collection/blob/main/models/etm.py)
 
 ## Contextualized Topic Models (CTM):
 
@@ -154,5 +154,24 @@ the generation of more meaningful and coherent topics than either standard LDA o
 neural topic models. Results on four datasets show that our approach effectively increases 
 topic coherence.
 
-[[Paper]](https://arxiv.org/abs/2004.03974) [[code]](https://github.com/Georgios1993/Topic-Models-Collection/blob/main/models/ctm.py) [[GitHub]](https://github.com/MilaNLProc/contextualized-topic-models)
+[[Paper]](https://arxiv.org/abs/2004.03974) [[code]](https://github.com/georgecharatsaris/Topic-Models-Collection/blob/main/models/ctm.py) [[GitHub]](https://github.com/MilaNLProc/contextualized-topic-models)
 
+## Dynamic Topic Models (DTM):
+
+### Authors
+
+David M. Blei, John D. Lafferty
+
+### Abstract
+
+A family of probabilistic time series models is developed to analyze the time evolution of 
+topics in large document collections. The approach is to use state space models on the 
+natural parameters of the multinomial distributions that represent the topics. Variational 
+approximations based on Kalman filters and nonparametric wavelet regression are developed 
+to carry out approximate posterior inference over the latent topics. In addition to giving 
+quantitative, predictive models of a sequential corpus, dynamic topic models provide a 
+qualitative window into the contents of a large document collection. The models are 
+demonstrated by analyzing the OCR’ed archives of the journal Science from 1880 through 
+2000.
+
+[[Paper]](https://dl.acm.org/doi/abs/10.1145/1143844.1143859) [[code]](https://github.com/georgecharatsaris/Topic-Models-Collection/blob/main/models/dtm.py)
