@@ -230,9 +230,9 @@ if __name__ == '__main__':
 	topic_list = get_topics(cv, prodLDA, opt.num_topics, opt.top_words)
 
 # Print the title of the document and its topic based on ETM
-    doc_topic_list = get_doc_topic_list(prodLDA, train_loader, dtm, device)
-    df['Topic'] = doc_topic_list
-    print(df[['title', 'Topic']])	
+	doc_topic_list = get_doc_topic_list(prodLDA, train_loader, dtm, device)
+	df['Topic'] = doc_topic_list
+	print(df[['title', 'Topic']])	
 
 # Calculate the coherence scores
 	evaluation_model = CoherenceScores(topic_list, bow, dictionary, w2v)
