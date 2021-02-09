@@ -51,15 +51,19 @@ def CTM(dataset, cv, vocab_size, bert_size, num_topics, top_words, epochs):
 	ctm = CombinedTM(input_size=vocab_size, bert_input_size=bert_size, n_components=num_topics, num_epochs=epochs)
 	ctm.fit(dataset)
 
-	# Generate the topic-word matrix
+# Generate the topic-word matrix
 	word_topic_matrix = ctm.get_topic_word_matrix()
-	# Generate the topic mixture over the documents
+# Generate the topic mixture over the documents
 	topic_list = []
 
 	for topic in word_topic_matrix:
 		topic_list.append([cv.get_feature_names()[j] for j in topic.argsort()[-top_words:]])
 
-	return topic_list
+# Generate the document topic matrix
+	doc_topic_matrix = ctm.get_doc_topic_distribution(dataset)
+	doc_topic_list = doc_topic_matrix.argmax(axis=1)
+
+	return topic_list, doc_topic_list
 
 
 if __name__ == '__main__':
@@ -85,7 +89,11 @@ if __name__ == '__main__':
 
 # Generate the list of lists of the top 10 words of each topic and the proportion of topics over the documents
 	vocab_size = dtm.shape[1]
-	topic_list = CTM(dataset, cv, vocab_size, opt.bert_size, opt.num_topics, opt.top_words, opt.epochs)
+	topic_list, doc_topic_list = CTM(dataset, cv, vocab_size, opt.bert_size, opt.num_topics, opt.top_words, opt.epochs)
+
+# Print the title of the document and its topic based on CTM
+	df['Topic'] = doc_topic_list
+	print(df[['title', 'Topic']])
 
 # Calculate the coherence scores
 	evaluation_model = CoherenceScores(topic_list, bow, dictionary, w2v)

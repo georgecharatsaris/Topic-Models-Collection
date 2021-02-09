@@ -72,7 +72,7 @@ if __name__ == '__main__':
 # Create the list of lists of the top 10 words of each topic
 	topic_list, doc_topic_list = NMF(dtm, tfidf, opt.num_topics, opt.top_words)
 		
-# Print the title of the document and its topic based on the LDA
+# Print the title of the document and its topic based on NMF
 	df['Topic'] = doc_topic_list
 	print(df[['title', 'Topic']])
 

@@ -70,7 +70,7 @@ if __name__ == '__main__':
 # Create the list of lists of the top words of each topic
 	topic_list, doc_topic_list = LDA(dtm, cv, opt.num_topics, opt.top_words)
 	
-# Print the title of the document and its topic based on the LDA
+# Print the title of the document and its topic based on LDA
 	df['Topic'] = doc_topic_list
 	print(df[['title', 'Topic']])
 

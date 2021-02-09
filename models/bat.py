@@ -192,13 +192,13 @@ def get_topics(tfidf, model, num_topics, top_words, device):
 # Generate the topic-word matrix
     onehot_topic = torch.eye(num_topics, device=device)
     topic_word_matrix = model(onehot_topic)
-    # Create a list of lists of the top words for each topic
+# Create a list of lists of the top words for each topic
     topic_list = []
 
     for topic in topic_word_matrix:
         topic_list.append([tfidf.get_feature_names()[j] for j in topic.argsort()[-top_words:]])
 
-    # Save the resulted list of lists of words for each topic setting
+# Save the resulted list of lists of words for each topic setting
     df = pd.DataFrame(np.array(topic_list).T, columns=[f'Topic {i + 1}' for i in range(num_topics)])
     df.to_excel(f'BAT_{num_topics}.xlsx')
 
@@ -256,7 +256,7 @@ if __name__ == '__main__':
 # Create the list of lists of the top 10 words of each topic
     topic_list = get_topics(tfidf, generator, opt.num_topics, opt.top_words, device)
 
-# Print the title of the document and its topic based on the LDA
+# Print the title of the document and its topic based on BAT
     doc_topic_list = get_doc_topic_list(dtm, encoder)
     df['Topic'] = doc_topic_list
     print(df[['title', 'Topic']])
