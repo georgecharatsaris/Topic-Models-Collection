@@ -10,7 +10,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='HeiOnline.csv', help='the path to the dataset')
-parser.add_argument('--vectorizer', type=str, default='tfidf', help='the CountVectorizer from sklearn')
+parser.add_argument('--vectorizer', type=str, default='tfidf', help='the TfIdfVectorizer from sklearn')
 parser.add_argument('--min_df', type=int, default=2, help='the minimum number of documents containing a word')
 parser.add_argument('--max_df', type=float, default=0.7, help='the maximum number of topics containing a word')
 parser.add_argument('--size', type=int, default=100, help='the size of the w2v embeddings')

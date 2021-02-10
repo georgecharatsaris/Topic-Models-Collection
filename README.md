@@ -10,7 +10,7 @@ Last but not least, by selecting a different number of topics `parser.add_argume
 
 All the models' parameters are the same as they presented in the official papers, except for LDA in which I use `doc_topic_prior=50/num_topics` and `topic_word_prior=0.01` as proposed in this [paper](https://www.pnas.org/content/101/suppl_1/5228.short). 
 
-The vectorizers are selected based on the papers, except for Topic Models in Embedded Spaces, where I used the normalized tfidf vectorizer instead of the normalized bag-of-words vectorizer.
+The vectorizers `parser.add_argument('--vectorizer', type=str, default='cv', help='the CountVectorizer from sklearn')` and `parser.add_argument('--vectorizer', type=str, default='tfidf', help='the TfidfVectorizer from sklearn')`are selected based on the papers, except for Topic Models in Embedded Spaces, where I used the tfidf vectorizer instead of the bag-of-words vectorizer.
 
 # Dataset
 
