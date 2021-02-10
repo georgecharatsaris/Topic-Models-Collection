@@ -1,6 +1,7 @@
 # Topic-Models-Collection
 
-This repository contains implementations of several topic models on the HeinOnline dataset. 
+This repository contains implementations of several topic models on the HeinOnline dataset. By changing
+the dataset's path one can execute the models using their datasets.
 
 # Dataset
 
