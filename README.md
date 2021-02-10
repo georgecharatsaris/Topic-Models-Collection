@@ -20,9 +20,9 @@ The file is called Common Crawl (42B tokens, 1.9M vocab, uncased, 300d vectors, 
 # Installation
 
 ```
-git clone https://github.com/georgecharatsaris/Topic-Models-Collection;
-cd Topic-Models-Collection/;
-pip install -r requirements.txt;
+git clone https://github.com/georgecharatsaris/Topic-Models-Collection
+cd Topic-Models-Collection/
+pip install -r requirements.txt
 ```
 
 # Implementations
