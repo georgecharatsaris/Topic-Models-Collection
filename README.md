@@ -8,7 +8,9 @@ Also, one can choose how many words to keep during the document term matrix's cr
 
 Last but not least, by selecting a different number of topics `parser.add_argument('--num_topics', type=int, default=20, help='the number of topics')`  or number of top words `parser.add_argument('--top_words', type=int, default=10, help='the number of top words for each topic')`,  one can train the different models to yield more topics and print more or less than 10 words in each of the topics.
 
-All the models' parameters are the same as they presented in the official papers, except for LDA in which I use `doc_topic_prior=50/num_topics` and `topic_word_prior=0.01` as proposed in this [paper](https://www.pnas.org/content/101/suppl_1/5228.short). The vectorizers are selected based on the papers, except for Topic Models in Embedded Spaces, where I used the normalized tfidf vectorizer instead of the normalized bag-of-words vectorizer.
+All the models' parameters are the same as they presented in the official papers, except for LDA in which I use `doc_topic_prior=50/num_topics` and `topic_word_prior=0.01` as proposed in this [paper](https://www.pnas.org/content/101/suppl_1/5228.short). 
+
+The vectorizers are selected based on the papers, except for Topic Models in Embedded Spaces, where I used the normalized tfidf vectorizer instead of the normalized bag-of-words vectorizer.
 
 # Dataset
 
