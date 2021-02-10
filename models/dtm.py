@@ -10,6 +10,7 @@ from evaluation.metrics import CoherenceModel
 
 
 parser = argparse.ArgumentParser()
+parser.add_argument('--dataset', type=str, default='HeiOnline.csv', help='the path to the dataset')
 parser.add_argument('--path', type=str, default='dtm-win64.exe', help='the path to the dtm binary')
 parser.add_argument('--min_df', type=int, default=2, help='the minimum number of documents containing a word')
 parser.add_argument('--max_df', type=float, default=0.7, help='the maximum number of topics containing a word')
@@ -68,7 +69,7 @@ def DTM(path, time_slices, num_topics, corpus):
 
 if __name__ == '__main__':
 # Define the dataset and the arguments
-	df = pd.read_csv('HeinOnline.csv')
+	df = pd.read_csv(opt.dataset)
 	articles = df['content']
 
 # Generate the document term matrix and the vectorizer

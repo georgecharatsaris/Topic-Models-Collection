@@ -10,6 +10,7 @@ import argparse
 
 
 parser = argparse.ArgumentParser()
+parser.add_argument('--dataset', type=str, default='HeiOnline.csv', help='the path to the dataset')
 parser.add_argument('--vectorizer', type=str, default='tfidf', help='the TfidfVectorizer from sklearn')
 parser.add_argument('--min_df', type=int, default=2, help='the minimum number of documents containing a word')
 parser.add_argument('--max_df', type=float, default=0.7, help='the maximum number of topics containing a word')
@@ -226,10 +227,9 @@ def get_doc_topic_list(dtm, model):
 
 
 if __name__ == '__main__':
-
 # Define the dataset and the arguments
-    df = pd.read_csv('HeinOnline.csv')
-    articles = df['content']
+	df = pd.read_csv(opt.dataset)
+	articles = df['content']
 
 # Generate the document term matrix and the vectorizer
     processed_articles = articles.apply(tokenizer)
