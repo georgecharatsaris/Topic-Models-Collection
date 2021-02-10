@@ -13,7 +13,7 @@ parser.add_argument('--vectorizer', type=str, default='cv', help='the CountVecto
 parser.add_argument('--min_df', type=int, default=2, help='the minimum number of documents containing a word')
 parser.add_argument('--max_df', type=float, default=0.7, help='the maximum number of topics containing a word')
 parser.add_argument('--size', type=int, default=100, help='the size of the w2v embeddings')
-parser.add_argument('--num_topics', type=int, default=2, help='the number of topics')
+parser.add_argument('--num_topics', type=int, default=20, help='the number of topics')
 parser.add_argument('--top_words', type=int, default=10, help='the number of top words for each topic')
 opt = parser.parse_args()
 
