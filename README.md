@@ -11,6 +11,12 @@ intelligence''. All the included articles contain both keywords at least once.
 
 [[Link]](https://home.heinonline.org/)
 
+# Data
+
+- The Glove embeddings used in this repository can be found on this [webpage](https://nlp.stanford.edu/projects/glove/).
+The file is called Common Crawl (42B tokens, 1.9M vocab, uncased, 300d vectors, 1.75 GB download).
+- The binary dtm for the Dynamic Topic Model can be downloades [here] https://github.com/magsilva/dtm/tree/master/bin).
+
 # Implementations
 
 ## Latent Dirichlet Allocation (LDA):
