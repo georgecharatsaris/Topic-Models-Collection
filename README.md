@@ -1,6 +1,6 @@
 # Topic-Models-Collection
 
-This repository contains implementations of several topic models on HeinOnline. 
+This repository contains implementations of several topic models on the HeinOnline dataset. 
 
 # Dataset
 
