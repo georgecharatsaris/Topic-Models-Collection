@@ -21,7 +21,7 @@ The file is called Common Crawl (42B tokens, 1.9M vocab, uncased, 300d vectors, 
 
 ```
 git clone https://github.com/georgecharatsaris/Topic-Models-Collection
-cd Topic-Models-Collection/
+cd Topic-Models-Collection
 pip install -r requirements.txt
 ```
 
@@ -47,6 +47,13 @@ classification, and collaborative filtering, comparing to a mixture of unigrams 
 the probabilistic LSI model.
 
 [[Paper]](https://jmlr.org/papers/volume3/blei03a/blei03a.pdf) [[Code]](https://github.com/georgecharatsaris/Topic-Models-Collection/blob/main/models/lda.py)
+
+### Run Example
+
+```
+cd models
+python lda.py
+```
 
 ## Non-Negative Factorization (NMF):
 
@@ -76,6 +83,13 @@ analytics systems.
 
 [[Paper]](https://link.springer.com/chapter/10.1007/978-3-319-09259-1_7) [[Code]](https://github.com/georgecharatsaris/Topic-Models-Collection/blob/main/models/nmf.py)
 
+### Run Example
+
+```
+cd models
+python nmf.py
+```
+
 ## Autoencoding Variational Inference (ProdLDA):
 
 ### Authors
@@ -100,6 +114,13 @@ product of experts. By changing only one line of code from LDA, we find that Pro
 much more interpretable topics, even if LDA is trained via collapsed Gibbs sampling.
 
 [[Paper]](https://arxiv.org/abs/1703.01488) [[Code]](https://github.com/georgecharatsaris/Topic-Models-Collection/blob/main/models/prodlda.py)
+
+### Run Example
+
+```
+cd models
+python prodlda.py
+```
 
 ## Neural Topic Modeling with Bidirectional Adversarial Training (BAT):
 
@@ -129,6 +150,13 @@ improvements achieved by Gaussian-BAT where an increase of near 6% is observed i
 
 [[Paper]](https://arxiv.org/abs/2004.12331) [[code]](https://github.com/georgecharatsaris/Topic-Models-Collection/blob/main/models/bat.py)
 
+### Run Example
+
+```
+cd models
+python bat.py
+```
+
 ## Topic Models in Embedded Spaces (ETM):
 
 ### Authors
@@ -150,6 +178,13 @@ both topic quality and predictive performance.
 
 [[Paper]](https://www.mitpressjournals.org/doi/full/10.1162/tacl_a_00325) [[code]](https://github.com/georgecharatsaris/Topic-Models-Collection/blob/main/models/etm.py)
 
+### Run Example
+
+```
+cd models
+python etm.py
+```
+
 ## Contextualized Topic Models (CTM):
 
 ### Authors
@@ -170,6 +205,13 @@ topic coherence.
 
 [[Paper]](https://arxiv.org/abs/2004.03974) [[code]](https://github.com/georgecharatsaris/Topic-Models-Collection/blob/main/models/ctm.py) [[GitHub]](https://github.com/MilaNLProc/contextualized-topic-models)
 
+### Run Example
+
+```
+cd models
+python ctm.py
+```
+
 ## Dynamic Topic Models (DTM):
 
 ### Authors
@@ -189,3 +231,10 @@ demonstrated by analyzing the OCR’ed archives of the journal Science from 1880
 2000.
 
 [[Paper]](https://dl.acm.org/doi/abs/10.1145/1143844.1143859) [[code]](https://github.com/georgecharatsaris/Topic-Models-Collection/blob/main/models/dtm.py)
+
+### Run Example
+
+```
+cd models
+python dtm.py
+```
