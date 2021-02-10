@@ -5,7 +5,9 @@ the dataset's path and setting the training data to the respective column one ca
 using their datasets. For instance, replace   
 `parser.add_argument('--dataset', type=str, default='HeiOnline.csv', help='the path to the dataset')` and  `articles = df['content']`  
 with  
-`parser.add_argument('--dataset', type=str, default='you own path', help='the path to the dataset')` and  `articles = df['the respective column']`.
+`parser.add_argument('--dataset', type=str, default='you own path', help='the path to the dataset')` and  `articles = df['the respective column']`.  Also, 
+one can choose what vectorizer to use and how many many words to keep during the document term matrix's creation by modifying `parser.add_argument('--vectorizer', type=str, default='cv', help='the CountVectorizer from sklearn')`,  `parser.add_argument('--min_df', type=int, default=2, help='the minimum number of documents containing a word')`, and  `parser.add_argument('--max_df', type=float, default=0.7, help='the maximum number of topics containing a word')`, respectively.  Last but not least, by selecting a different number of topics `parser.add_argument('--num_topics', type=int, default=2, help='the number of topics')`  or number of top words `parser.add_argument('--top_words', type=int, default=10, help='the number of top words for each topic')`,  one can train the different models to yield more topics and print more or less than 10 words in each of the topics.  All the models' parameters are the same as they presented in the official papers, except for LDA in which I use `doc_topic_prior=50/num_topics` and `topic_word_prior=0.01` as proposed in this [paper]
+(https://www.pnas.org/content/101/suppl_1/5228.short).
 
 
 # Dataset
