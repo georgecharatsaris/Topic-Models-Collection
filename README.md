@@ -17,6 +17,14 @@ intelligence''. All the included articles contain both keywords at least once.
 The file is called Common Crawl (42B tokens, 1.9M vocab, uncased, 300d vectors, 1.75 GB download).
 - The binary dtm for the Dynamic Topic Model can be downloaded [here](https://github.com/magsilva/dtm/tree/master/bin).
 
+# Installation
+
+`
+git clone https://github.com/georgecharatsaris/Topic-Models-Collection
+cd Topic-Models-Collection/
+pip install -r requirements.txt
+`
+
 # Implementations
 
 ## Latent Dirichlet Allocation (LDA):
