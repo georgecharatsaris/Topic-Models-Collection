@@ -2,8 +2,7 @@
 
 This repository contains implementations of several topic models on the HeinOnline dataset. By changing
 the dataset's path and setting the training data to the respective column one can execute the models 
-using their datasets. For instance, replace `opt.dataset = 'HeinOnline.csv' and articles = df['content']` 
-with `opt.dataset = 'your own path' and articles = df['the respective column']`.
+using their datasets. For instance, replace `parser.add_argument('--dataset', type=str, default='HeiOnline.csv', help='the path to the dataset') and articles = df['content']` with `parser.add_argument('--dataset', type=str, default='you own path', help='the path to the dataset') and articles = df['the respective column']`.
 
 
 # Dataset
