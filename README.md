@@ -1,7 +1,10 @@
 # Topic-Models-Collection
 
 This repository contains implementations of several topic models on the HeinOnline dataset. By changing
-the dataset's path one can execute the models using their datasets.
+the dataset's path and setting the training data to the respective column one can execute the models 
+using their datasets. For instance, replace `opt.dataset = 'HeinOnline.csv' and articles = df['content']` 
+with `opt.dataset = 'your own path' and articles = df[the respective column]`.
+
 
 # Dataset
 
