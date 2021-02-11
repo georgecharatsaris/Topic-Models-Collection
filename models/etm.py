@@ -23,9 +23,10 @@ parser.add_argument('--epochs', type=int, default=100, help='the number of the t
 parser.add_argument('--batch_size', type=int, default=64, help='the size of the batches')
 parser.add_argument('--lr', type=float, default=0.002, help='the learning rate of Adam')
 parser.add_argument('--b1', type=float, default=0.9, help='the decay of first order momentum of gradient for Adam')
-parser.add_argument('--b2', type=float, default=0.999, help='the decay of first order momentum of gradient for Adam')
+parser.add_argument('--b2', type=float, default=0.999, help='the decay of second order momentum of gradient for Adam')
 parser.add_argument('--embeddings', type=str, default='Word2Vec', help='Word2Vec or GloVe')
 parser.add_argument('--decay', type=float, default=1.2e-6, help='some l2 regularization')
+parser.add_argument('--hidden_size', type=int, default=800, help="the hidden layer's size of ETM")
 opt = parser.parse_args()
 
 
@@ -34,7 +35,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class ETM(nn.Module):
 
-    def __init__(self, vocab_size, num_topics, batch_size, embeddings, weights, device):
+    def __init__(self, vocab_size, hidden_size, num_topics, batch_size, embeddings, weights, device):
         super(ETM, self).__init__()
         self.batch_size = batch_size
         self.device = device
@@ -47,15 +48,15 @@ class ETM(nn.Module):
             self.alphas = nn.Linear(300, num_topics, bias=False)
 
         self.encoder = nn.Sequential(
-        nn.Linear(vocab_size, 800),
+        nn.Linear(vocab_size, hidden_size),
         nn.Softplus(),
-        nn.Linear(800, 800),
+        nn.Linear(hidden_size, hidden_size),
         nn.Softplus()
         )
 
-        self.mean = nn.Linear(800, num_topics)
+        self.mean = nn.Linear(hidden_size, num_topics)
         self.mean_bn = nn.BatchNorm1d(num_topics)
-        self.logvar = nn.Linear(800, num_topics)
+        self.logvar = nn.Linear(hidden_size, num_topics)
         self.logvar_bn = nn.BatchNorm1d(num_topics)
 
         self.decoder_bn = nn.BatchNorm1d(vocab_size)
@@ -259,7 +260,7 @@ if __name__ == '__main__':
 
 # Define the models and the optimizers
     vocab_size = dtm.shape[1]
-    model = (ETM(vocab_size, opt.num_topics, opt.batch_size, opt.embeddings, weights, device)).to(device)
+    model = (ETM(vocab_size, opt.hidden_size, opt.num_topics, opt.batch_size, opt.embeddings, weights, device)).to(device)
     optimizer = optim.Adam(model.parameters(), lr=opt.lr, betas=(opt.b1, opt.b2), weight_decay=opt.decay)
 
 # Train the model

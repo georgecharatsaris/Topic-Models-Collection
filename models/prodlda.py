@@ -22,7 +22,9 @@ parser.add_argument('--epochs', type=int, default=100, help='the number of the t
 parser.add_argument('--batch_size', type=int, default=64, help='the size of the batches')
 parser.add_argument('--lr', type=float, default=0.002, help='the learning rate of Adam')
 parser.add_argument('--b1', type=float, default=0.9, help='the decay of first order momentum of gradient for Adam')
-parser.add_argument('--b2', type=float, default=0.999, help='the decay of first order momentum of gradient for Adam')
+parser.add_argument('--b2', type=float, default=0.999, help='the decay of second order momentum of gradient for Adam')
+parser.add_argument('--hidden_size', type=int, default=100, help="the hidden layer's size of ProdLDA")
+parser.add_argument('--dropout', type=float, default=0.2, help='the dropout of the hidden layer')
 opt = parser.parse_args()
 
 
@@ -31,20 +33,20 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class ProdLDA(nn.Module):
 
-	def __init__(self, vocab_size, num_topics, batch_size, device):
+	def __init__(self, vocab_size, hidden_size,, dropout, num_topics, batch_size, device):
 		super(ProdLDA, self).__init__()
 		self.batch_size = batch_size
 		self.num_topics = num_topics
 		self.vocab_size = vocab_size
 		self.device = device
 
-		self.encoder_input = nn.Linear(vocab_size, 100)
-		self.encoder_lr = nn.Linear(100, 100)
-		self.encoder_drop = nn.Dropout(0.2)
+		self.encoder_input = nn.Linear(vocab_size, hidden_size)
+		self.encoder_lr = nn.Linear(hidden_size, hidden_size)
+		self.encoder_drop = nn.Dropout(dropout)
 
-		self.posterior_mean = nn.Linear(100, num_topics)
+		self.posterior_mean = nn.Linear(hidden_size, num_topics)
 		self.posterior_mean_bn = nn.BatchNorm1d(num_topics, affine=False) # No trainable parameters
-		self.posterior_logvar = nn.Linear(100, num_topics)
+		self.posterior_logvar = nn.Linear(hidden_size, num_topics)
 		self.posterior_logvar_bn = nn.BatchNorm1d(num_topics, affine=False) # No trainable parameters
 
 		self.beta = (torch.Tensor(num_topics, vocab_size)).to(device)
@@ -221,7 +223,7 @@ if __name__ == '__main__':
 
 # Define the model and the optimizer
 	vocab_size = dtm.shape[1]
-	prodLDA = ProdLDA(vocab_size, opt.num_topics, opt.batch_size, device).to(device)
+	prodLDA = ProdLDA(vocab_size, opt.hidden_size, opt.dropout, opt.num_topics, opt.batch_size, device).to(device)
 	optimizer = optim.Adam(prodLDA.parameters(), lr=opt.lr, betas=(opt.b1, opt.b2))
 
 # Train the model

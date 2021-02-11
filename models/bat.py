@@ -17,12 +17,13 @@ parser.add_argument('--max_df', type=float, default=0.7, help='the maximum numbe
 parser.add_argument('--size', type=int, default=100, help='the size of the w2v embeddings')
 parser.add_argument('--num_topics', type=int, default=20, help='the number of topics')
 parser.add_argument('--top_words', type=int, default=10, help='the number of top words for each topic')
-parser.add_argument('--epochs', type=int, default=100, help='the number of the training iterations')
+parser.add_argument('--epochs', type=int, default=200, help='the number of the training iterations')
 parser.add_argument('--batch_size', type=int, default=64, help='the size of the batches')
 parser.add_argument('--lr', type=float, default=0.0001, help='the learning rate of Adam')
 parser.add_argument('--b1', type=float, default=0.5, help='the decay of first order momentum of gradient for Adam')
-parser.add_argument('--b2', type=float, default=0.999, help='the decay of first order momentum of gradient for Adam')
+parser.add_argument('--b2', type=float, default=0.999, help='the decay of second order momentum of gradient for Adam')
 parser.add_argument('--n_critic', type=int, default=5, help='the number of discriminator iterations per generator iteration')
+parser.add_argument('--hidden_size', type=int, default=100, help="the representation layer's size")
 opt = parser.parse_args()
 
 
@@ -31,15 +32,15 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class Encoder(nn.Module):
 
-    def __init__(self, vocab_size, num_topics, batch_size):
+    def __init__(self, vocab_size, hidden_size, num_topics, batch_size):
         super(Encoder, self).__init__()
         self.batch_size = batch_size
 
         self.model = nn.Sequential(
-        nn.Linear(vocab_size, 100),
-        nn.BatchNorm1d(100, affine=False), # No trainable parameters
+        nn.Linear(vocab_size, hidden_size),
+        nn.BatchNorm1d(hidden_size, affine=False), # No trainable parameters
         nn.LeakyReLU(0.2, inplace=True),
-        nn.Linear(100, num_topics),
+        nn.Linear(hidden_size, num_topics),
         nn.Softmax(1)
         )
 
@@ -55,15 +56,15 @@ class Encoder(nn.Module):
 
 class Generator(nn.Module):
 
-    def __init__(self, vocab_size, num_topics, batch_size):
+    def __init__(self, vocab_size, hidden_size, num_topics, batch_size):
         super(Generator, self).__init__()
         self.batch_size = batch_size
 
         self.model = nn.Sequential(
-        nn.Linear(num_topics, 100),
-        nn.BatchNorm1d(100, affine=False), # No trainable parameters
+        nn.Linear(num_topics, hidden_size),
+        nn.BatchNorm1d(hidden_size, affine=False), # No trainable parameters
         nn.LeakyReLU(0.2, inplace=True),
-        nn.Linear(100, vocab_size),
+        nn.Linear(hidden_size, vocab_size),
         nn.Softmax(1)
         )
 
@@ -79,14 +80,14 @@ class Generator(nn.Module):
 
 class Discriminator(nn.Module):
 
-    def __init__(self, vocab_size, num_topics, batch_size):
+    def __init__(self, vocab_size, hidden_size, num_topics, batch_size):
         super(Discriminator, self).__init__()
         self.batch_size = batch_size
 
         self.model = nn.Sequential(
-        nn.Linear(vocab_size + num_topics, 100),
+        nn.Linear(vocab_size + num_topics, hidden_size),
         nn.LeakyReLU(0.2, inplace=True),
-        nn.Linear(100, 1)
+        nn.Linear(hidden_size, 1)
         )
 
     def forward(self, inputs):
@@ -242,9 +243,9 @@ if __name__ == '__main__':
 
 # Define the models and the optimizers
     vocab_size = dtm.shape[1]
-    encoder = Encoder(vocab_size, opt.num_topics, opt.batch_size).to(device)
-    generator = Generator(vocab_size, opt.num_topics, opt.batch_size).to(device)
-    discriminator = Discriminator(vocab_size, opt.num_topics, opt.batch_size).to(device)
+    encoder = Encoder(vocab_size, opt.hidden_size, opt.num_topics, opt.batch_size).to(device)
+    generator = Generator(vocab_size, opt.hidden_size , opt.num_topics, opt.batch_size).to(device)
+    discriminator = Discriminator(vocab_size, opt.hidden_size , opt.num_topics, opt.batch_size).to(device)
 
     optimizer_e = optim.Adam(encoder.parameters(), lr=opt.lr, betas=(opt.b1, opt.b2))
     optimizer_g = optim.Adam(generator.parameters(), lr=opt.lr, betas=(opt.b1, opt.b2))
