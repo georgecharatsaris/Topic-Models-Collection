@@ -33,7 +33,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class ProdLDA(nn.Module):
 
-	def __init__(self, vocab_size, hidden_size,, dropout, num_topics, batch_size, device):
+	def __init__(self, vocab_size, hidden_size, dropout, num_topics, batch_size, device):
 		super(ProdLDA, self).__init__()
 		self.batch_size = batch_size
 		self.num_topics = num_topics

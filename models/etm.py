@@ -79,7 +79,6 @@ class ETM(nn.Module):
 
     def get_beta(self):
         beta = F.softmax(self.alphas(self.rho.weight), 0)
-
         return beta.transpose(1, 0)
 
     def get_theta(self, normalized_inputs):
