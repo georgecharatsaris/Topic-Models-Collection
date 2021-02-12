@@ -185,7 +185,7 @@ def get_topics(model, tfidf, num_topics, top_words):
     return topic_list
 
 
-def get_doc_topic_list(model, train_loader, dtm, device):
+def get_doc_topic_list(model, train_loader, device):
 
     """Return the list of the topic of each document.
 
@@ -193,7 +193,6 @@ def get_doc_topic_list(model, train_loader, dtm, device):
 
             model: The ETM model.
             train_loader: An iterable over the dataset.
-            dtm: An array representing the document term matrix.
             device: 'cpu' or 'cuda'
 
         Returns:
@@ -269,7 +268,7 @@ if __name__ == '__main__':
     topic_list = get_topics(model, tfidf, opt.num_topics, opt.top_words)
 
 # Print the title of the document and its topic based on ETM
-    doc_topic_list = get_doc_topic_list(model, train_loader, dtm, device)
+    doc_topic_list = get_doc_topic_list(model, train_loader, device)
     df['Topic'] = doc_topic_list
     print(df[['title', 'Topic']])
 
