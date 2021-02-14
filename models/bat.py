@@ -191,9 +191,12 @@ def get_topics(tfidf, model, num_topics, top_words, device):
 
     """
 
+    model.eval()
+
+    with torch.no_grad:
 # Generate the topic-word matrix
-    onehot_topic = torch.eye(num_topics, device=device)
-    topic_word_matrix = model(onehot_topic)
+        onehot_topic = torch.eye(num_topics, device=device)
+        topic_word_matrix = model(onehot_topic)
 # Create a list of lists of the top words for each topic
     topic_list = []
 
@@ -221,8 +224,11 @@ def get_doc_topic_list(dtm, model):
 
     """
     
-    doc_topic_matrix = model(dtm)
-    doc_topic_list = doc_topic_matrix.argmax(axis=1)
+    model.eval()
+
+    with torch.no_grad():
+        doc_topic_matrix = model(dtm)
+        doc_topic_list = doc_topic_matrix.argmax(axis=1)
 
     return doc_topic_list
 
