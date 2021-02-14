@@ -147,7 +147,7 @@ def train_model(train_loader, model, optimizer, epochs, device):
             total += 1
 
         epoch_loss = sum(losses)/total
-        train_losses.append(epoch_loss)
+        train_losses.append(epoch_loss.item())
         print(f'Epoch {epoch + 1}/{epochs}, Loss={epoch_loss}')
 
     return train_losses

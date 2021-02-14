@@ -167,7 +167,7 @@ def train_model(discriminator, generator, encoder, optimizer_d, optimizer_g, opt
         epoch_d = sum(losses_d)/total
         epoch_g = sum(losses_g)/total
         epoch_e = sum(losses_e)/total
-        total_losses.append([epoch_d, epoch_g, epoch_e])
+        total_losses.append([epoch_d.item(), epoch_g.item(), epoch_e.item()])
         print(f'Epoch {epoch + 1}/{epochs}, Encoder Loss:{epoch_e}, Generator Loss:{epoch_g}, Discriminator Loss:{epoch_d}')
 
     return train_losses
