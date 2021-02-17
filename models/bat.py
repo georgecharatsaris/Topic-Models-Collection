@@ -24,6 +24,7 @@ parser.add_argument('--b1', type=float, default=0.5, help='the decay of first or
 parser.add_argument('--b2', type=float, default=0.999, help='the decay of second order momentum of gradient for Adam')
 parser.add_argument('--n_critic', type=int, default=5, help='the number of discriminator iterations per generator iteration')
 parser.add_argument('--hidden_size', type=int, default=100, help="the representation layer's size")
+parser.add_argument('--sg', type=int, default=1, help='Training algorithm: 1 for skip-gram, 0 for CBOW.')
 opt = parser.parse_args()
 
 
@@ -242,7 +243,7 @@ if __name__ == '__main__':
     processed_articles = articles.apply(tokenizer)
     tfidf, dtm = document_term_matrix(processed_articles, opt.vectorizer, opt.min_df, opt.max_df)
 # Generate the bag-of-words, the dictionary, and the word2vec model trained on the dataset
-    bow, dictionary, w2v = get_dictionary(tfidf, articles, opt.min_df, opt.size)
+    bow, dictionary, w2v = get_dictionary(cv, articles, opt.min_df, opt.size, opt.sg)
 
 # Create the train loader
     train_loader = dataset(dtm, batch_size)

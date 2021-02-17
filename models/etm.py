@@ -27,6 +27,7 @@ parser.add_argument('--b2', type=float, default=0.999, help='the decay of second
 parser.add_argument('--embeddings', type=str, default='Word2Vec', help='Word2Vec or GloVe')
 parser.add_argument('--decay', type=float, default=1.2e-6, help='some l2 regularization')
 parser.add_argument('--hidden_size', type=int, default=800, help="the hidden layer's size of ETM")
+parser.add_argument('--sg', type=int, default=1, help='Training algorithm: 1 for skip-gram, 0 for CBOW.')
 opt = parser.parse_args()
 
 
@@ -231,7 +232,7 @@ if __name__ == '__main__':
     tfidf, dtm = document_term_matrix(processed_articles, opt.vectorizer, opt.min_df, opt.max_df)
     dtm = normalize(dtm)
 # Generate the bag-of-words, the dictionary, and the word2vec model trained on the dataset
-    bow, dictionary, w2v = get_dictionary(tfidf, articles, opt.min_df, opt.size)
+    bow, dictionary, w2v = get_dictionary(cv, articles, opt.min_df, opt.size, opt.sg)
 
     if opt.embeddings == 'GloVe':
 # Load the GloVe embeddings

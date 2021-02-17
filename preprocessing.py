@@ -57,7 +57,7 @@ def document_term_matrix(inputs, vectorizer, min_df, max_df):
 
 
 # Necessary for evaluating the several models.
-def get_dictionary(model, articles, min_df, size):
+def get_dictionary(model, articles, min_df, size, sg):
 
 	"""Returns the bag of words, the dictionary of the corpus, and the w2v vectors of the words in the dictionary.
 
@@ -66,6 +66,7 @@ def get_dictionary(model, articles, min_df, size):
 			articles: A list of lists of processed documents (at least without punctuation).
 			min_df : The minimum number of documents that contain a word.
 			size: The size of w2v vectors.
+			sg: Training algorithm: 1 for skip-gram, 0 for CBOW. 
 
 		Returns:
 			bow: A list of lists of tokens.
@@ -75,7 +76,7 @@ def get_dictionary(model, articles, min_df, size):
 
 	bow = [[token for token in article.split() if token in model.vocabulary_] for article in articles] 
 	dictionary = Dictionary(bow)
-	w2v = Word2Vec(bow, size=size, min_count=min_df)
+	w2v = Word2Vec(bow, size=size, min_count=min_df, sg=sg)
 	return bow, dictionary, w2v
 
 

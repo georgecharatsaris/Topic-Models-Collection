@@ -15,6 +15,7 @@ parser.add_argument('--max_df', type=float, default=0.7, help='the maximum numbe
 parser.add_argument('--size', type=int, default=100, help='the size of the w2v embeddings')
 parser.add_argument('--num_topics', type=int, default=20, help='the number of topics')
 parser.add_argument('--top_words', type=int, default=10, help='the number of top words for each topic')
+parser.add_argument('--sg', type=int, default=1, help='Training algorithm: 1 for skip-gram, 0 for CBOW.')
 opt = parser.parse_args()
 
 
@@ -66,7 +67,7 @@ if __name__ == '__main__':
 	processed_articles = articles.apply(tokenizer)
 	cv, dtm = document_term_matrix(processed_articles, opt.vectorizer, opt.min_df, opt.max_df)
 # Generate the bag-of-words, the dictionary, and the word2vec model trained on the dataset
-	bow, dictionary, w2v = get_dictionary(cv, articles, opt.min_df, opt.size)
+	bow, dictionary, w2v = get_dictionary(cv, articles, opt.min_df, opt.size, opt.sg)
 
 # Create the list of lists of the top words of each topic
 	topic_list, doc_topic_list = LDA(dtm, cv, opt.num_topics, opt.top_words)

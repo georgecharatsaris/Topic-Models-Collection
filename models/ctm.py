@@ -22,6 +22,7 @@ parser.add_argument('--top_words', type=int, default=10, help='the number of top
 parser.add_argument('--epochs', type=int, default=100, help='the number of the training iterations')
 parser.add_argument('--batch_size', type=int, default=64, help='the size of the batches')
 parser.add_argument('--bert_size', type=int, default=768, help='the size of the bert embeddings')
+parser.add_argument('--sg', type=int, default=1, help='Training algorithm: 1 for skip-gram, 0 for CBOW.')
 opt = parser.parse_args()
 
 
@@ -76,7 +77,7 @@ if __name__ == '__main__':
 	processed_articles = articles.apply(tokenizer)
 	cv, dtm = document_term_matrix(processed_articles, opt.vectorizer, opt.min_df, opt.max_df)
 # Generate the bag-of-words, the dictionary, and the word2vec model trained on the dataset
-	bow, dictionary, w2v = get_dictionary(cv, articles, opt.min_df, opt.size)
+	bow, dictionary, w2v = get_dictionary(cv, articles, opt.min_df, opt.size, opt.sg)
 
 # Some other arguments
 	
