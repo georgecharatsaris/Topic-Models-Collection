@@ -79,9 +79,6 @@ if __name__ == '__main__':
 # Generate the bag-of-words, the dictionary, and the word2vec model trained on the dataset
 	bow, dictionary, w2v = get_dictionary(cv, articles, opt.min_df, opt.size, opt.sg)
 
-# Some other arguments
-	
-
 # Generate the sBert embeddings
 	sent_embeddings = sBert_embeddings(articles, device)
 
